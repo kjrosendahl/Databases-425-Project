@@ -210,4 +210,4 @@ insert into ProdInv values ('08', '2002', 100, 1150);
 select street, city, state 
 from addresses natural join stores 
 where sid in (select sid from inventory natural join stores natural join ProdInv 
-    where PID = '5001');
+    where PID = '5001'); 
