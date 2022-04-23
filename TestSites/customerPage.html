@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Page</title>
+
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Saira+Condensed&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link href="dropDown.css" rel="stylesheet">
+
+    <!-- Scripts -->
+    <script src="js/dropDown.js"></script>
+    <script src="js/cart.js"></script>
+
+    <script>
+        function init() {
+            autoComplete(document.getElementById("myInput"), products);
+        }
+    </script>
+
+    <style>
+        body {
+            margin: unset;
+        }
+        #header {
+            font-family: 'Saira Condensed', sans-serif;
+            display: flex;
+            position: static;
+            left: 0px;
+            top: 0px;
+            flex-direction: row;
+            align-content: center;
+            justify-content: space-between;
+            height: 50px;
+        }
+        #billBoard {
+            display: flex;
+            flex-direction: row;
+            align-content: center;
+            margin-left: 5px;
+        }
+        #signInBox {
+            margin-right: 5px;
+            display: flex;
+            align-content: center;
+            width: 136px;
+            justify-content: space-between;
+        }
+        #assemblyLine {
+            display: flex;
+        }
+    </style>
+</head>
+<body onload="init()">
+    <!-- Header -->
+    <div id="header">
+        <div id="billBoard">
+            <h2 id="companyTitle">Blurred Limes Electronics</h2>
+            <image src="images/logo.png" style="height: 50px;"></image>
+        </div>
+        <div id="signInBox">
+            <span>Sign In</span>/<span>Create Account</span>
+        </div>
+    </div>
+
+    <div id="assemblyLine">
+        <div id="itemSelect">
+            <h3>Select an Item</h3>
+            <div class="autocomplete" style="width: 300px;">
+                <input id="myInput" type="text" name="ElectronicProduct" placeholder="Type Product Name">
+            </div>
+        </div>
+        
+        <div id="specifyItem">
+            <h3>
+                <span>Selected: </span>
+                <strong><span id="selectedItem"></span></strong>
+            </h3>
+            Amount
+            <input type="number">
+            <input type="button" value="Add to Cart">
+        </div>
+
+        <div id="cart">
+
+        </div>
+    </div>
+
+</body>
+</html>
