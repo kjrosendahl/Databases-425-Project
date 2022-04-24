@@ -1,7 +1,17 @@
-/* Strong Relation */
+/* select 'drop table '||table_name||' cascade constraints;' from user_tables; */
+
+/*
+Idea: 
+each Inventory has a passkey that is required to send restock order. 
+- gets around the problem of certain employees not being able to send an order
+- also prevents problems with warehouses sending orders 
+- any employee who works in a store and "knows" the passkey will be able to send a restock order for the appropriate inventory
+*/
+
 create table Inventory
 (
 InvID varchar(6), 
+Passkey char(8) not null unique,
 primary key (InvID)
 );
 
@@ -13,50 +23,45 @@ Street varchar(20),
 City varchar(20), 
 State char(2), 
 Zipcode char(5), 
-Region varchar(10), 
+Region varchar(10) check (Region in ('Northeast', 'Southwest', 'West', 'Southeast', 'Midwest')),
 primary key (AddressID)
 );
-alter table Addresses add constraint region_check check (Region in 
-('Northeast', 'Southwest', 'West', 'Southeast', 'Midwest'));
 
 /* Strong Relation */
 create table Stores
 (
 SID varchar(6), 
-InvID varchar(6) not null, 
-AddressID varchar(6) not null,
+InvID varchar(6) unique not null, 
+AddressID varchar(6) unique not null,
 Name varchar(20), 
 primary key (SID), 
-foreign key (InvID) references Inventory, 
+foreign key (InvID) references Inventory,
 foreign key (AddressID) references Addresses
 );
-alter table Stores add constraint unq_store unique (InvID, AddressID);
 
 /* Strong Relation */
 create table Employees
 (
 EmpID varchar(8), 
-SID varchar(6), 
+SID varchar(6) not null, 
 Name varchar(20), 
 Title varchar(20),
-Password varchar(20), 
-Salary numeric(12,2), 
+Password varchar(20) check (length(Password) >= 6) not null, 
+Salary numeric(12,2) check (salary >0), 
 primary key (EmpID), 
 foreign key (SID) references Stores(SID)
 );
-alter table Employees add constraint salary_check check (salary > 0);
 
 /* Strong Relation */
 create table Warehouses
 (
 WID varchar(6), 
-InvID varchar(6) not null, 
-AddressID varchar(6) not null, 
+InvID varchar(6) unique not null, 
+AddressID varchar(6) unique not null, 
 primary key (WID), 
-foreign key (InvID) references Inventory, 
+foreign key (InvID) references Inventory,
 foreign key (AddressID) references Addresses
 ); 
-alter table Warehouses add constraint unq_ware unique (InvID, AddressID);
 
 /* Strong Relation */
 create table Categories
@@ -80,35 +85,164 @@ create table Products
 PID varchar(8), 
 BrandID varchar(8), 
 CategoryID varchar(8), 
-UPC char(12), 
+UPC char(12) not null, 
 ProductName varchar(20), 
 primary key (PID), 
 foreign key (BrandID) references Brands, 
 foreign key (CategoryID) references Categories
 );
 
-/* Weak entity? Relies on Product, Inventory */
+/* allows us to specify when products are actually packages of other products*/
+create table Contains
+(
+PackID varchar(6),
+CompID varchar(6),
+primary key (PackID, CompID)
+);
+
+/* relates Product with Store/Warehouses based on InventoryIDs */
 create table ProdInv
 (
 InvID varchar(6), 
 PID varchar(8), 
-Quantity int, 
-Price numeric(8,2), 
+Quantity int check (Quantity >= 0), 
+Price numeric(8,2) check (Price >= 0),
 primary key (InvID, PID)
+); 
+
+/* specifies the manufacturers that can make certain products */
+create table Manufacturer
+(
+ManID varchar(6),
+PID varchar(6),
+Name varchar(20), 
+primary key (ManID, PID)
+); 
+
+/* used for restocking orders */
+create table Restock
+(
+RestockID varchar(12), 
+InvID varchar(6) not null, 
+ManID varchar(6) not null, 
+Reordered date,
+Status varchar(10) check (Status in ('Delivered', 'Pending', 'Cancelled'))
+); 
+
+/* similar to ProdInv: relates the restockID with products in the order */
+create table RestockProd
+(
+RestockID varchar(12), 
+PID varchar(8) not null, 
+Quantity int check (Quantity > 0), 
+primary key (RestockID, PID)
+); 
+
+/* start customer data*/ 
+
+create table Customer 
+(
+CID varchar(12), 
+Name varchar(20), 
+Frequent varchar(5) check (Frequent in ('True', 'False')), 
+primary key (CID)
+); 
+
+/* if no name, means they were in person only */
+/* if name but no email, means they were infrequent customer ordering online */ 
+/* if name and email, means they are a frequent customer with an account */ 
+create table CustAddress 
+(
+CID varchar(12),  
+Street varchar(20), 
+City varchar(20), 
+State char(2), 
+Zipcode char(5), 
+primary key (CID), 
+foreign key (CID) references Customer
 );
-alter table ProdInv add constraint quantity_check check (Quantity > 0);
-alter table ProdInv add constraint price_check check (Price > 0);
+
+/* necessary? */ 
+create table Contractor 
+ ( 
+ CID varchar(12), 
+ AccNo varchar(12) unique, 
+ BillingAmt int check (BillingAmt > 0), 
+ primary key (CID), 
+ foreign key (CID) references Customer
+ );
+
+ /* used to keep track of frequent customers, which have online accounts */
+ create table OnlineAcc 
+ ( 
+ CID varchar(12), 
+ Email varchar(50) unique not null, 
+ Password varchar(20) check (length(Password) >= 6) not null,
+ primary key (CID), 
+ foreign key (CID) references Customer 
+ ); 
+ 
+ /* similar to Restock details */
+ create table Orders 
+ ( 
+ OrderID varchar(12), 
+ CID varchar(12) not null, 
+ InvID varchar(6) not null, 
+ Status varchar(10) check (Status in ('Complete', 'Pending', 'Cancelled')),
+ Total numeric(8,2) check (Total > 0) not null, 
+ Odate date, 
+ primary key (orderID), 
+ foreign key (CID) references Customer
+ ); 
+ 
+/* similar to RestockProd */
+create table OrderProd
+(
+OrderID varchar(12), 
+PID varchar(8) not null, 
+Quantity int check (Quantity > 0), 
+primary key (OrderID, PID)
+); 
+
+create table Credit 
+(
+CID varchar(12), 
+CardNo char(16) unique not null, 
+Expr char(4) not null, 
+CVV char(3) not null, 
+Credit int not null,
+primary key (CID), 
+foreign key (CID) references Customer
+); 
+
+create table Shipping 
+(
+ShipID varchar(12), 
+Company varchar(20), 
+primary key (ShipID)
+); 
+
+create table OrderShip 
+( 
+OrderID varchar(12), 
+ShipID varchar(12) not null, 
+TrackNo char(16) not null, 
+primary key (OrderID), 
+foreign key (OrderID) references Orders, 
+foreign key (ShipID) references Shipping
+); 
+
 
 /* add some data */
 
-insert into Inventory values ('01');
-insert into Inventory values ('02');
-insert into Inventory values ('03');
-insert into Inventory values ('04');
-insert into Inventory values ('05');
-insert into Inventory values ('06');
-insert into Inventory values ('07');
-insert into Inventory values ('08');
+insert into Inventory values ('01', '7ef8ab3a');
+insert into Inventory values ('02', '4cc3de21');
+insert into Inventory values ('03', 'f3bab76d');
+insert into Inventory values ('04', '3d3b65f2');
+insert into Inventory values ('05', '1a1e8d35');
+insert into Inventory values ('06', '56b3dc18');
+insert into Inventory values ('07', '174cd2fe');
+insert into Inventory values ('08', 'a12ef542');
 
 insert into Addresses values ('001', '10 S State St', 'Chicago', 'IL', 60616, 'Midwest');
 insert into Addresses values ('002', '19 Kitchen Ave', 'Kenosha', 'WI', 64921, 'Midwest');
@@ -124,7 +258,7 @@ insert into Stores values ('102', '07', '003', 'Best Buys');
 insert into Stores values ('103', '04', '004', 'Genius Bar');
 insert into Stores values ('104', '05', '001', 'Electronics R Us'); 
 
-insert into Warehouses values ('201', '06', '007');
+insert into Warehouses values ('201', '08', '007');
 insert into Warehouses values ('202', '01', '006');
 insert into Warehouses values ('203', '02', '005');
 insert into Warehouses values ('204', '03', '008');
@@ -206,8 +340,56 @@ insert into ProdInv values ('07', '5003', 310, 35);
 insert into ProdInv values ('08', '1031', 95, 740); 
 insert into ProdInv values ('08', '2002', 100, 1150); 
 
+insert into Manufacturer values ('01', '1030', 'ManuA');
+insert into Manufacturer values ('01', '1031', 'ManuA'); 
+insert into Manufacturer values ('01', '1042', 'ManuA'); 
+insert into Manufacturer values ('01', '1043', 'ManuA'); 
+insert into Manufacturer values ('01', '1044', 'ManuA'); 
+insert into Manufacturer values ('01', '2002', 'ManuA'); 
+insert into Manufacturer values ('01', '2003', 'ManuA'); 
+insert into Manufacturer values ('02', '2042', 'ManuB'); 
+insert into Manufacturer values ('02', '2045', 'ManuB'); 
+insert into Manufacturer values ('02', '2050', 'ManuB');
+insert into Manufacturer values ('03', '2340', 'ManuC'); 
+insert into Manufacturer values ('03', '2342', 'ManuC'); 
+insert into Manufacturer values ('03', '3080', 'ManuC'); 
+insert into Manufacturer values ('03', '3090', 'ManuC'); 
+insert into Manufacturer values ('03', '3100', 'ManuC');
+insert into Manufacturer values ('04', '5000', 'ManuD'); 
+insert into Manufacturer values ('04', '5001', 'ManuD'); 
+insert into Manufacturer values ('04', '5002', 'ManuD'); 
+insert into Manufacturer values ('04', '5003', 'ManuD');
+
+insert into Restock values ('000001', '01', '03', date '2022-04-23', 'Pending'); 
+
+insert into RestockProd values ('000001', '3080', 20); 
+insert into RestockProd values ('000001', '3100', 50); 
+
+insert into Customer values ('0001', 'Kaylee Rosendahl', 'True'); 
+insert into CustAddress values ('0001', '3241 S Wabash Ave', 'Chicago', 'IL', 60616); 
+insert into OnlineAcc values ('0001', 'krosendahl@hawk.iit.edu', '425Databases'); 
+
+insert into Orders values ('100001', '0001', '07', 'Complete', 185, date '2022-04-24');
+insert into OrderProd values ('100001', '5000', 1); 
+insert into OrderProd values ('100001', '5001', 1); 
+insert into OrderProd values ('100001', '5002', 1); 
+insert into OrderProd values ('100001', '5003', 1); 
+insert into Credit values ('0001', '1234567800000000', '0199', '000', 1000); 
+
+insert into Shipping values ('12345', 'UPS'); 
+insert into Shipping values ('67890', 'FedEx'); 
+
+insert into OrderShip values ('100001', '12345', '1234123412341234'); 
+
+
 /* example query: find the address of any stores that hold Legend of Zelda BOTW */ 
 select street, city, state 
-from addresses natural join stores 
-where sid in (select sid from inventory natural join stores natural join ProdInv 
+from Addresses natural join stores 
+where sid in (select sid from stores natural join ProdInv 
     where PID = '5001');
+    
+/* find product names, quantity from all orders given by Kaylee */ 
+select ProductName, Quantity
+from Orders natural join OrderProd natural join Products 
+where CID = (select CID from Customer where Name = 'Kaylee Rosendahl');
+
