@@ -15,4 +15,4 @@ To Do:
 - Finalize Model and Schema
 - Write SQL Code (relations, views, index?)
 - Turn into a user application 
-- wait and see if our other group member fell of the face of the earth, or if he'll eventually turn up
+- wait and see if our other group member fell off the face of the earth, or if he'll eventually turn up
