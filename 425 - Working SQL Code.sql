@@ -384,6 +384,7 @@ insert into OrderShip values ('100001', '12345', '1234123412341234');
 
 /* example query: find the address of any stores that hold Legend of Zelda BOTW */ 
 select street, city, state 
+<<<<<<< HEAD
 from Addresses natural join stores 
 where sid in (select sid from stores natural join ProdInv 
     where PID = '5001');
@@ -393,3 +394,8 @@ select ProductName, Quantity
 from Orders natural join OrderProd natural join Products 
 where CID = (select CID from Customer where Name = 'Kaylee Rosendahl');
 
+=======
+from addresses natural join stores 
+where sid in (select sid from inventory natural join stores natural join ProdInv 
+    where PID = '5001'); 
+>>>>>>> 3e2a2ad22c0bc7f79bee6f0536b01d8f7cdb1048
