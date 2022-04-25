@@ -414,4 +414,4 @@ where sid in (select sid from stores natural join ProdInv
 select ProductName, Quantity
 from Orders natural join OrderProd natural join Products 
 where CID = (select CID from Customer where Name = 'Kaylee Rosendahl');
-
+ 
