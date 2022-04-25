@@ -32,6 +32,41 @@ select PID, UPC, ProductName, BrandName, CategoryName, Quantity, Price
 from ProdInv natural join Warehouses natural join Products natural join Brands natural join Categories
 where WID = [WID]
 
+-- add order details for in person customer
+insert into Customer values (null, null, False)
+insert into Orders values (null, [CID], {InvInv}, 'Complete', {Total}, [Date]])
+for...
+    insert into OrderProd values ([OID], {PID}, {Quantity})
+--... and update in inventory
+for...
+update ProdInv
+    set Quantity =
+    (CASE
+        when PID = {PID} and InvID = {InvID} then Quantity - {Quantity}
+        else Quantity
+    end);
+
+
+-- add restock details
+insert into Restock values (null, {InvID}, {ManID}, [Date], 'Pending')
+for...
+    insert into RestockProd values ([OID], {PID}, {Quantity})
+-- ... and update in inventory
+update Restock
+    set Status =
+    (CASE
+        when OID = {OID} then "Complete")
+        else Status
+    end);
+for...
+update ProdInv
+    set Quantity =
+    (CASE
+        when PID = {PID} and InvID = {InvID} then Quantity + {Quantity}
+        else Quantity
+    end);
+
+
 
 
 -- In Python??
