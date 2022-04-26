@@ -1,0 +1,105 @@
+ToDo
+    Cust
+        View account history
+        Modify Account
+        Delete Account
+    Emp
+        Manual restock?
+        In store checkout?
+            
+
+What we need to discuss
+    Whether we have manual restock or not?
+    How do we want to implement in store purchases?
+    What does UPC(barcode) mean?
+    What does frequent under customer mean?
+    How is credit done?
+    Exactly what information is stored for each customer
+
+
+List of site pages
+
+---------------------------------  CUSOMERS ------- Who we do care about
+Customer Login
+    The page itself is just a login screen
+    Will send to the server an email and password 
+    Will need back a confirmation of whether or not there has been success
+    ------
+    Stuff that will be sent to the server
+        Page request
+            -> A page to display stuff   
+        Login verfication (email, password)
+            -> A confirmation of whether the email/pwd is incorrect and a CID if it is (boolean, CID)
+
+Customer Account Creation
+    Account creation page
+    Enter an email and a password
+    ------
+    Stuff that will be sent to the server
+        Page request
+            -> A page to display stuff
+        Create account (email, pawssword)
+            -> Was account creation successful, cid if it was (boolean, cid)
+
+
+Ordering Online Page
+    On this page you must select which store you will pick items from first
+    After that you can pick out items and choose a quantity and then add those to your cart
+    You cam search through categories of all the products by limiting the categories visible or by manually searching
+    Customers can buy everything in their cart which will take them to the payment page
+        Cart info will not be sent to the server, it will be kept on device
+    ------
+    Stuff that will be sent to the server
+        Page request
+            -> A page to display stuff
+            -> A list of store inventory ids (InvID)[]
+            -> A list of brands and their brand ids (BrandID, BrandName)[]
+            -> A list of categories and the ids (CategoryID, CategoryName)[]
+        Request for store inventory (InvID)
+            -> The respective inventory (PID, ProductName, price, BrandID, CategoryID, quantity)[]
+
+Payment Page
+    This is the page where they will actually pay for stuff
+    They will see their total
+    They can select an existing credit card or
+    They can create a new one and specify whether they want us to remember it
+    (maybe) They can select existing addresses or
+    (maybe) They input info for a new one
+    When they hit the pay button, it will actually send the order to the server along with their credit card info
+    They will have to enter the CVV for the card no matter what
+    ------
+    Stuff that will be sent to the server
+        Page request
+            -> A page to display stuff
+            -> Existing credit cards (Card Number, expiration date)[]
+            -> Existing addresses (Street, City, State, Zipcode)[]
+        Pay for order (Card Number, expiration date, CVV, Street, City, State, Zipcode)
+            -> A confirmation as to whether their payment went through and a message explaining failure (boolean, message)
+
+
+
+
+
+---------------------------------  EMPLOYEES ------- Who we don't care about
+Employee Login
+    The page itself is just a login screen
+    Will send to the server an employee id and password (emp_id, password)
+    Will need back a confirmation of whether or not there has been success (boolean)
+    ------
+    Stuff that will be sent to the server
+        Page request
+            -> A page to display stuff
+        Login verfication
+            ->A confirmation of whether the id/pwd is incorrect and a EID if it is (boolean, EID)
+
+Store stock page
+    Employees can view the inventories of the stores/warehouses that their rank will allow them
+        I don't know if you intended for their title to do something like that
+    Employees can select from a list of those stores/warehouses and will request from the server the actual inventories
+    ------
+    Stuff that will be sent to the server
+        Page request
+            -> A page to display stuff
+            -> List of available inventories they have access to (InvID)[]
+        View inventory (EmpId, InvID)
+            -> The inventory of a specific warehouse or store they request (PID, ProductName, quantity)[]
