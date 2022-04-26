@@ -38,13 +38,14 @@ insert into Orders values (null, [CID], {InvInv}, 'Complete', {Total}, [Date]])
 for...
     insert into OrderProd values ([OID], {PID}, {Quantity})
 --... and update in inventory
-for...
-update ProdInv
-    set Quantity =
-    (CASE
-        when PID = {PID} and InvID = {InvID} then Quantity - {Quantity}
-        else Quantity
-    end);
+-- already a trigger in SQL -->
+create trigger order_placed after insert on OrderProd
+for each row
+begin
+    update ProdInv
+    set Quantity = Quantity - :new.Quantity
+    where PID = :new.PID and InvID = :new.InvID;
+end;
 
 
 -- add restock details
@@ -52,21 +53,34 @@ insert into Restock values (null, {InvID}, {ManID}, [Date], 'Pending')
 for...
     insert into RestockProd values ([OID], {PID}, {Quantity})
 -- ... and update in inventory
-update Restock
-    set Status =
-    (CASE
-        when OID = {OID} then "Complete")
-        else Status
-    end);
-for...
-update ProdInv
-    set Quantity =
-    (CASE
-        when PID = {PID} and InvID = {InvID} then Quantity + {Quantity}
-        else Quantity
-    end);
+-- already a trigger in SQL -->
+create trigger restock_placed after insert on RestockProd
+for each row
+begin
+    update ProdInv
+    set Quantity = Quantity + :new.Quantity
+    where PID = :new.PID and InvID = :new.InvID;
+end;
+/
+
+-- statisics
+create function stat_prod (@PID varchar(8))
+    returns table (
+        PID varchar(8),
+        OrderID int,
+        InvID varchar(6),
+        CID int,
+        Status varchar(10),
+        Total numeric(8,2),
+        Odate date,
+        BrandID varchar(8),
+        CategoryID varchar(8),
+        ProductName varchar(20))
+    return table
+        (select * from Orders natural join OrderProd natural join Products
+            where PID = @PID)
 
 
-
+    )
 
 -- In Python??
