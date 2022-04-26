@@ -1,22 +1,29 @@
-ToDo
-    Cust
-        Modify Account (What does this mean)
-        Delete Account
-    Emp
-        Manual restock?
-        In store checkout?
-            
-
 What we need to discuss
     Whether we have manual restock or not?
+        Yes
     How do we want to implement in store purchases?
+        Add a field for whether it is in store or not
     What does UPC(barcode) mean?
+        NA
     What does frequent under customer mean?
+        They just have an online accout
     How is credit done?
+        Default
     Exactly what information is stored for each customer?
+        addresses, credit card, name, id
+            -> Add a name field
+        Online accounts
+            email
     Should searches be done on the server? Probably
+        Searches will be done on server
+        Just limit by store, then category, then brand, or whatever
     What goes in order history
+        What expected
     Can customers have multiple credit cards attached to their account?
+        yes
+
+Notes
+    Customers can take from stores and warehouses
 
 
 List of site pages
@@ -40,8 +47,8 @@ Customer Account Creation
     Stuff that will be sent to the server
         Page request
             -> A page to display stuff
-        Create account (email, pawssword)
-            -> Was account creation successful, cid if it was (boolean, cid)
+        Create account (email, pawssword, Street, City, State, Zipcode)
+            -> Was account creation successful, cid if it was, message if not (boolean, cid, message)
 
 
 Ordering Online Page
@@ -57,43 +64,63 @@ Ordering Online Page
             -> A list of store inventory ids (InvID)[]
             -> A list of brands and their brand ids (BrandID, BrandName)[]
             -> A list of categories and the ids (CategoryID, CategoryName)[]
-        Request for store inventory (InvID)
-            -> The respective inventory (PID, ProductName, price, BrandID, CategoryID, quantity)[]
+        Request for store/warehouse inventory (InvID)
+            -> The respective inventory (PID, ProductName, price, quantity)[]
+        Limit by brand (InvId, BrandID, CategoryID, quantity)
+            -> Search results (PID, ProductName, price)[]
+        Limit by category (InvId, BrandID, CategoryID, quantity)
+            -> Search results (PID, ProductName, price)[]
 
-Payment Page
+Customer Payment Page
     This is the page where they will actually pay for stuff
     They will see their total
-    They can select an existing credit card or
-    They can create a new one and specify whether they want us to remember it
-    (maybe) They can select existing addresses or
-    (maybe) They input info for a new one
+    If have an account, it will automatically send to the address they have on file, and the credit card
+    If they don't have an account, input an address and a credit card
     When they hit the pay button, it will actually send the order to the server along with their credit card info
     They will have to enter the CVV for the card no matter what
     ------
     Stuff that will be sent to the server
         Page request
             -> A page to display stuff
-            -> Existing credit cards (Card Number, expiration date)[]
-            -> Existing addresses (Street, City, State, Zipcode)[]
-        Pay for order (Card Number, expiration date, CVV, Street, City, State, Zipcode)
+            -> Existing credit cards (Card Number)
+            -> Existing addresses (Street, City, State, Zipcode)
+        Pay for order NO account (CID, Card Number, CVV, Street, City, State, Zipcode, (PID, quantity)[])
+            -> A confirmation as to whether their payment went through and a message explaining failure (boolean, message)
+        Pay for order account (CID, (PID, quantity)[])
             -> A confirmation as to whether their payment went through and a message explaining failure (boolean, message)
 
 View Acccount history
     View your account history
-    This means all past purchases, I'm pretty sure
-    Customers here have the options to delete items from their account
-    Customers can also view the credit that they currently have available for all cards attached to their account
+    This means all past purchases
+    Customers can also view the credit that they currently
     ------
     Stuff that will be sent to the server
         Page request
             -> A page to display stuff
-            -> Existing credit cards and credit available (Card Number, expiration date, credit)[]
-            -> Order history ()
-        Delete request (Card Number)
-            -> A confirmation of whether or not it went through (boolean)
+            -> Existing credit and credit available (Card Number, credit)
+            -> Order history (PID, ProductName, price)[]
 
-
-
+Modify Acccount
+    Change credit card
+    Change address
+    Delete Account
+    ------
+    Stuff that will be sent to the server
+        Page request
+            -> A page to display stuff
+            -> Their information (CID, Name, email)
+            -> Existing credit and credit available (Card Number, credit)
+            -> Order history (PID, ProductName, price)[]
+        Credit Card Change (CID, Card Number, CVV)
+            -> Confirmation (boolean, card number)
+        Address change (CID, Street, City, State, Zipcode)
+            -> Confirmation (boolean, Street, City, State, Zipcode)
+        Email Change (CID, email)
+            -> Confirmation (boolean, email)
+        Password Change (CID, oldPassword, newPassword)
+            -> Confirmation (boolean)
+        Delete Account (CID)
+            -> Confirmation (boolean)
 
 ---------------------------------  EMPLOYEES ------------------------------------ Who we don't care about
 Employee Login
@@ -105,16 +132,38 @@ Employee Login
         Page request
             -> A page to display stuff
         Login verfication
-            ->A confirmation of whether the id/pwd is incorrect and a EID if it is (boolean, EID)
+            -> A confirmation of whether the id/pwd is incorrect and a EID if it is (boolean, EID)
 
 Store stock page
-    Employees can view the inventories of the stores/warehouses that their rank will allow them
-        I don't know if you intended for their title to do something like that
+    Employees can view the inventories of the stores/warehouses
+    They can only order from one warehouse
     Employees can select from a list of those stores/warehouses and will request from the server the actual inventories
+    They can submit manual restock requests
     ------
     Stuff that will be sent to the server
         Page request
             -> A page to display stuff
-            -> List of available inventories they have access to (InvID)[]
+            -> List of available inventories (InvID)[]
+            -> List of all the products (PID, ProductName)[]
+            -> List of all the manufactureres (ManID, Name, PID[])
         View inventory (EmpId, InvID)
-            -> The inventory of a specific warehouse or store they request (PID, ProductName, quantity)[]
+            -> The inventory of a specific warehouse or store they request (PID, ProductName, quantity, brandID, CategoryID)[]
+            -> A list of brands and their brand ids (BrandID, BrandName)[]
+            -> A list of categories and the ids (CategoryID, CategoryName)[]
+        Manual restock (InvID, PID, quantity, ManID)[]
+            -> Confirmation and updated inventory (PID, ProductName)[]
+
+In store Payment Page
+    Products they buy and if they have an account
+    ------
+    Stuff that will be sent to the server
+        
+        Pay for order NO account (CID, Card Number, CVV, Street, City, State, Zipcode, (PID, quantity)[])
+            -> A confirmation as to whether their payment went through and a message explaining failure (boolean, message)
+        Pay for order account (CID, (PID, quantity)[])
+            -> A confirmation as to whether their payment went through and a message explaining failure (boolean, message)
+
+        Pay for order NO Acccount (InvID, PID, quantity)[]
+            -> A confirmation (boolean)
+        Pay for order Account (InvID, CID, (PID, quantity)[])
+            -> A confirmation (boolean)
