@@ -157,7 +157,6 @@ In store Payment Page
     Products they buy and if they have an account
     ------
     Stuff that will be sent to the server
-        
         Pay for order NO account (CID, Card Number, CVV, Street, City, State, Zipcode, (PID, quantity)[])
             -> A confirmation as to whether their payment went through and a message explaining failure (boolean, message)
         Pay for order account (CID, (PID, quantity)[])

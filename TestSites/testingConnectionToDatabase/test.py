@@ -12,10 +12,16 @@ print("connected")
 
 cursor = connection.cursor()
 
-manager_id = 145
+"; drop tables"
+
 sql = """SELECT *
         FROM course
         WHERE credits = 4"""
+
+sql = """insert into departments (department_id, department_name)
+          values (:dept_id, :dept_name)"""
+cursor.execute(sql, [280, "Facility"])
+
 cursor.execute(sql)
 
 for row in cursor:
