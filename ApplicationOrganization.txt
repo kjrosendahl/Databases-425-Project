@@ -1,7 +1,6 @@
 ToDo
     Cust
-        View account history
-        Modify Account
+        Modify Account (What does this mean)
         Delete Account
     Emp
         Manual restock?
@@ -14,12 +13,15 @@ What we need to discuss
     What does UPC(barcode) mean?
     What does frequent under customer mean?
     How is credit done?
-    Exactly what information is stored for each customer
+    Exactly what information is stored for each customer?
+    Should searches be done on the server? Probably
+    What goes in order history
+    Can customers have multiple credit cards attached to their account?
 
 
 List of site pages
 
----------------------------------  CUSOMERS ------- Who we do care about
+---------------------------------  CUSOMERS ------------------------------------ Who we do care about
 Customer Login
     The page itself is just a login screen
     Will send to the server an email and password 
@@ -76,11 +78,24 @@ Payment Page
         Pay for order (Card Number, expiration date, CVV, Street, City, State, Zipcode)
             -> A confirmation as to whether their payment went through and a message explaining failure (boolean, message)
 
+View Acccount history
+    View your account history
+    This means all past purchases, I'm pretty sure
+    Customers here have the options to delete items from their account
+    Customers can also view the credit that they currently have available for all cards attached to their account
+    ------
+    Stuff that will be sent to the server
+        Page request
+            -> A page to display stuff
+            -> Existing credit cards and credit available (Card Number, expiration date, credit)[]
+            -> Order history ()
+        Delete request (Card Number)
+            -> A confirmation of whether or not it went through (boolean)
 
 
 
 
----------------------------------  EMPLOYEES ------- Who we don't care about
+---------------------------------  EMPLOYEES ------------------------------------ Who we don't care about
 Employee Login
     The page itself is just a login screen
     Will send to the server an employee id and password (emp_id, password)
