@@ -11,6 +11,6 @@ def loginVerification(email, pa):
         if x: 
             return (True, x[0][0])
         else: 
-            return (False, 'null')
+            return (False, None)
     except DBFailure: 
         print('Something went wrong. Please try again.')
