@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Login</title>
+
+    <link rel="stylesheet" href="universalStyles.css">
+    <style>
+        #content {
+            display: flex;
+            justify-content: center;
+            padding-top: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <img src="../logo.png">
+        <div id="sessionOptions">Log Out</div>
+    </div>
+    <div id="content">
+        <div id="login">
+            <p>Email</p>
+            <input type="email" id="userEmail">
+            <p>Password</p>
+            <input type="password" id="userPassword"><br>
+            <input type="button" id="submit" value="Log In">
+        </div>
+    </div>
+    <script>
+        document.getElementById("submit").addEventListener('click', () => {
+            let email = document.getElementById("userEmail").value;
+            let pwd = document.getElementById("userPassword").value;
+            sendToServer(email,pwd)
+        });
+        function sendToServer(email, pwd) {
+            // Send it to server
+            // If good, redirect
+            // If bad, tell them no
+        }
+    </script>
+</body>
+</html>

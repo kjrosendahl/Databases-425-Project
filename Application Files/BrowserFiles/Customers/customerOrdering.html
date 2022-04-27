@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordering</title>
+
+    <link rel="stylesheet" href="universalStyles.css">
+    <style>
+        #content {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <img src="../logo.png">
+        <div id="sessionOptions">Log Out</div>
+    </div>
+    <div id="content">
+        <div id="pane1">
+            <h2>Select Your Item</h2>
+            <h3>Select a store</h3>
+            <select id="stores"></select>
+            <h3>Limit by brand</h3>
+            <select id="brands"></select>
+            <h3>Limit by category</h3>
+            <select id="categories"></select>
+            <h3>Select your item</h3>
+            <select id="items"></select><br>
+            <input type="button" value="Modify It">
+        </div>
+        <div id="pane2">
+            <h2>Modify</h2>
+            <h3>How many do you want?</h3>
+            <input type="number" id="quantity"><br />
+            <input type="button" value="Add to Cart">
+        </div>
+        <div id="pane3">
+            <h2>Your Cart</h2>
+            <table id="cart">
+                <tr>
+                    <th>Item</th>
+                    <th>Amount</th>
+                    <th>Price</th>
+                </tr>
+                <tr label="01452">
+                    <td>Banans</td>
+                    <td>5</td>
+                    <td>$5</td>
+                    <td><input type="button" value="Remove"></td>
+                </tr>
+                <tr label="34586">
+                    <td>Sprigen</td>
+                    <td>3</td>
+                    <td>$32</td>
+                    <td><input type="button" value="Remove"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <script>
+        function askForThings() {
+            // We expect back a list of stuff, Idk whether this will be multiple things yet
+            
+            serverCom()
+            return []
+        }
+
+    </script>
+</body>
+</html>
