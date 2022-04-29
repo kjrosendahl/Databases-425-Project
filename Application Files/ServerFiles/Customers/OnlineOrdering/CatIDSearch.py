@@ -1,3 +1,4 @@
+# returns a list of CategoryIDs and their name
 def searchCatID():
     try: 
         sql = """select * from Categories"""
