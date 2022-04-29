@@ -14,6 +14,7 @@ def createAccount(CID, email, password, street, city, state, zipcode):
             print('Something went wrong. Please enter a valid address.')
         
         connection.commit()
+        return(True, CID, "Account created successfully.")
     except: 
-        print('Something went wrong.')
+        return(False, "null", "Something went wrong. Please try again.")
         
