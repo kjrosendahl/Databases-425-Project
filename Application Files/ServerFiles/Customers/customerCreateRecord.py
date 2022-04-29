@@ -9,6 +9,7 @@ def newCustomerRecord(Name):
         sql = """insert into Customer values (:CID, :Name, :Frequent)"""
         cursor.execute(sql, [CID, Name, "False"])
         
+        connection.commit()
         return(True, CID)
     except:
         return(False, "null")
