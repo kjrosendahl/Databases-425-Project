@@ -29,6 +29,9 @@ Notes
 List of site pages
 
 ---------------------------------  CUSOMERS ------------------------------------ Who we do care about
+Customer enters Application and does not already have an account: 
+    New customer record (Name)
+        -> new customer record (boolean, cid) *FINISHED*
 Customer Login
     The page itself is just a login screen
     Will send to the server an email and password 
@@ -38,7 +41,7 @@ Customer Login
         Page request
             -> A page to display stuff   
         Login verfication (email, password)
-            -> A confirmation of whether the email/pwd is incorrect and a CID if it is (boolean, CID)
+            -> A confirmation of whether the email/pwd is incorrect and a CID if it is (boolean, CID) *FINISHED*
 
 Customer Account Creation
     Account creation page
@@ -48,7 +51,7 @@ Customer Account Creation
         Page request
             -> A page to display stuff
         Create account (email, pawssword, Street, City, State, Zipcode)
-            -> Was account creation successful, cid if it was, message if not (boolean, cid, message)
+            -> Was account creation successful, cid if it was, message if not (boolean, cid, message) *FINISHED*
 
 
 Ordering Online Page
