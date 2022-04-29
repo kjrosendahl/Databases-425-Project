@@ -43,6 +43,7 @@ Customer Login
         Login verfication (email, password)
             -> A confirmation of whether the email/pwd is incorrect and a CID if it is (boolean, CID) *FINISHED*
 
+~ Kaylee's note --> separated/added address, credit card info for the account creation 
 Customer Account Creation
     Account creation page
     Enter an email and a password
@@ -50,8 +51,12 @@ Customer Account Creation
     Stuff that will be sent to the server
         Page request
             -> A page to display stuff
-        Create account (email, pawssword, Street, City, State, Zipcode)
+        Create account (CID, email, password)
             -> Was account creation successful, cid if it was, message if not (boolean, cid, message) *FINISHED*
+        Add Credit card (CID, Card Number, CVV)
+            -> was card add successfull (boolean, CID, message) *FINISHED*
+        Add address (CID, street, city, state, zipcode)
+            -> was address add successfull (boolean, CID, message) *FINISHED*
 
 
 Ordering Online Page
