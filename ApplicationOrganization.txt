@@ -64,15 +64,15 @@ Ordering Online Page
     Stuff that will be sent to the server
         Page request
             -> A page to display stuff
-            -> A list of store inventory ids (InvID, Names)[]
-            -> A list of brands and their brand ids (BrandID, BrandName)[]
-            -> A list of categories and the ids (CategoryID, CategoryName)[]
+            -> A list of store inventory ids (InvID, Names)[] *FINISHED*
+            -> A list of brands and their brand ids (BrandID, BrandName)[] *FINISHED*
+            -> A list of categories and the ids (CategoryID, CategoryName)[] *FINISHED*
         Request for store/warehouse inventory (InvID)
-            -> The respective inventory (PID, ProductName, price, quantity)[]
-        Limit by brand (InvId, BrandID, CategoryID, quantity)
-            -> Search results (PID, ProductName, price)[]
-        Limit by category (InvId, BrandID, CategoryID, quantity)
-            -> Search results (PID, ProductName, price)[]
+            -> The respective inventory (PID, ProductName, price, quantity, BrandName, CateogryName)[] *FINISHED*
+        Limit by brand (InvId, BrandID)
+            -> Search results (PID, ProductName, price, quantity, CategoryName)[] *FINISHED*
+        Limit by category (InvId, CategoryID)
+            -> Search results (PID, ProductName, price, quantity, BrandName)[] *FINISHED*
 
 Customer Payment Page
     This is the page where they will actually pay for stuff
