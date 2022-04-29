@@ -41,9 +41,11 @@ Customer Login
         Page request
             -> A page to display stuff   
         Login verfication (email, password)
-            -> A confirmation of whether the email/pwd is incorrect and a CID if it is (boolean, CID) *FINISHED*
+            -> A confirmation of whether the email/pwd is incorrect and a CID if it is (boolean, CID) *FINISHED (customerCreateRecord.py)*
+            
+^^^^^^^^^^^^^
+~ Kaylee's note --> separated/added address, credit card info for the account creation ~ 
 
-~ Kaylee's note --> separated/added address, credit card info for the account creation 
 Customer Account Creation
     Account creation page
     Enter an email and a password
@@ -52,14 +54,14 @@ Customer Account Creation
         Page request
             -> A page to display stuff
         Create account (CID, email, password)
-            -> Was account creation successful, cid if it was, message if not (boolean, cid, message) *FINISHED*
+            -> Was account creation successful, cid if it was, message if not (boolean, cid, message) *FINISHED (customerCreateAcc.py)*
         Add Credit card (CID, Card Number, CVV)
-            -> was card add successfull (boolean, CID, message) *FINISHED*
+            -> was card add successfull (boolean, CID, message) *FINISHED (customerCreateCard.py)*
         Add address (CID, street, city, state, zipcode)
-            -> was address add successfull (boolean, CID, message) *FINISHED*
+            -> was address add successfull (boolean, CID, message) *FINISHED (customerCreateAddress.py)*
 
 
-Ordering Online Page
+Ordering Online Page (Folder: OnlineOrdering)
     On this page you must select which store you will pick items from first
     After that you can pick out items and choose a quantity and then add those to your cart
     You cam search through categories of all the products by limiting the categories visible or by manually searching
@@ -69,17 +71,17 @@ Ordering Online Page
     Stuff that will be sent to the server
         Page request
             -> A page to display stuff
-            -> A list of store inventory ids (InvID, Names)[] *FINISHED*
-            -> A list of brands and their brand ids (BrandID, BrandName)[] *FINISHED*
-            -> A list of categories and the ids (CategoryID, CategoryName)[] *FINISHED*
+            -> A list of store inventory ids (InvID, Names)[] *FINISHED (InvIDStoreSearch.py, InvIDWarehouseSearch.py)* 
+            -> A list of brands and their brand ids (BrandID, BrandName)[] *FINISHED (BrandIDSearch.py)*
+            -> A list of categories and the ids (CategoryID, CategoryName)[] *FINISHED (CatIDSearch.py)*
         Request for store/warehouse inventory (InvID)
-            -> The respective inventory (PID, ProductName, price, quantity, BrandName, CateogryName)[] *FINISHED*
+            -> The respective inventory (PID, ProductName, price, quantity, BrandName, CateogryName)[] *FINISHED (InvRequest.py)*
         Limit by brand (InvId, BrandID)
-            -> Search results (PID, ProductName, price, quantity, CategoryName)[] *FINISHED*
+            -> Search results (PID, ProductName, price, quantity, CategoryName)[] *FINISHED (InvRequestLimitBrand.py)*
         Limit by category (InvId, CategoryID)
-            -> Search results (PID, ProductName, price, quantity, BrandName)[] *FINISHED*
+            -> Search results (PID, ProductName, price, quantity, BrandName)[] *FINISHED (InvRequestLimitCat.py)*
 
-Customer Payment Page
+Customer Payment Page (Folder: PaymentPage)
     This is the page where they will actually pay for stuff
     They will see their total
     If have an account, it will automatically send to the address they have on file, and the credit card
@@ -90,12 +92,23 @@ Customer Payment Page
     Stuff that will be sent to the server
         Page request
             -> A page to display stuff
-            -> Existing credit cards (Card Number)
-            -> Existing addresses (Street, City, State, Zipcode)
-        Pay for order NO account (CID, Card Number, CVV, Street, City, State, Zipcode, (PID, quantity)[])
-            -> A confirmation as to whether their payment went through and a message explaining failure (boolean, message)
-        Pay for order account (CID, (PID, quantity)[])
-            -> A confirmation as to whether their payment went through and a message explaining failure (boolean, message)
+            -> Existing credit cards (Card Number, CVV) *FINISHED (requestCredit.py)*
+            -> Existing addresses (Street, City, State, Zipcode) *FINISHED (requestAddress.py)*
+        Pay for order NO account (InvID, CID, Card Number, CVV, Street, City, State, Zipcode, (PID, quantity)[])
+            -> A confirmation as to whether their payment went through and a message explaining failure (boolean, tracking info, shipping name, message) *FINISHED (
+        Pay for order account (InvID, CID, (PID, quantity)[])
+            -> A confirmation as to whether their payment went through and a message explaining failure (boolean, tracking info, shipping name, message) *FINISHED*
+            *(both in placeOrder.py)*
+            
+ ^^^^^^^^^^^
+ ~ Kaylee's Notes for placeOrder
+ -- if they don't have account, will have to use the "add credit card" / "add address", also used in the "make online account" (see above note)
+ -- MUST pass in PIDs, Quantities as lists (it was the best way to check totals and quantities in placeOrder.py) 
+ -- possible error messages when trying to place an order: 
+        1) tried to order more quantity than was available, 
+        2) didn't have enough credit, 
+        3) the database crapped out on me again
+ -- regardless if they have an account or not, should return the tracking info and shipping company name, if successfully placed 
 
 View Acccount history
     View your account history
