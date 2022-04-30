@@ -12,7 +12,6 @@ Does the following:
 7) inserts the shipping information 
 8) (through triggers) automatically decreases the inventory quantity accordingly
 
-returns (boolean, tracking number (if any), shipping company (if any), and message)
 """
 
 def placeOrder(CID, InvID, PIDs, Quantities): 
@@ -56,7 +55,7 @@ def placeOrder(CID, InvID, PIDs, Quantities):
         sql = """insert into Orders values (:OrderID, :CID, :InvID, :status, :total, :day, :month, :year)"""
         x = cursor.execute(sql, [OrderID, CID, InvID, status, total, day, month, year])
     except: 
-        return(False, 'null', 'null', "Something went wrong. Please try again.", x)
+        return(False, 'null', 'null', "Something went wrong. Please try again.")
     
     # insert the products ordered into the OrderProd relation
     for i in range(items): 
