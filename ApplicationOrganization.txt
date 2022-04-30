@@ -149,7 +149,7 @@ Modify Acccount
  
  
 
----------------------------------  EMPLOYEES ------------------------------------ Who we don't care about
+---------------------------------  EMPLOYEES ------------------------------------ Who we don't care about --> in ServerFilesEmployee
 Employee Login
     The page itself is just a login screen
     Will send to the server an employee id and password (emp_id, password)
@@ -159,7 +159,7 @@ Employee Login
         Page request
             -> A page to display stuff
         Login verfication (emp_id, password)
-            -> A confirmation of whether the id/pwd is incorrect and a EID if it is (boolean, EID)
+            -> A confirmation of whether the id/pwd is incorrect and a EID if it is (boolean, EID) *FINISHED (loginEmployee.py)*
 
 Store stock page
     Employees can view the inventories of the stores/warehouses
@@ -170,26 +170,21 @@ Store stock page
     Stuff that will be sent to the server
         Page request
             -> A page to display stuff
-            -> List of available inventories (InvID)[]
-            -> List of all the products (PID, ProductName)[]
-            -> List of all the manufactureres (ManID, Name, PID[])
-        View inventory (EmpId, InvID)
-            -> The inventory of a specific warehouse or store they request (PID, ProductName, quantity, brandID, CategoryID)[]
+            -> List of available inventories (InvID)[] *FINISHED (availableInv.py)*
+            -> List of all the products (PID, ProductName, BrandID, CategoryID)[] *FINISHED (availableProd.py)*
+            -> List of all the manufactureres (ManID, Name, PID, Capacity)[] *FINISHED (manuInfo.py)*
+        View inventory (EmpId, InvID) *FINISHED, see above for the customer view inventory)*
+            -> The inventory of a specific warehouse or store they request (PID, ProductName, price, quantity, brandID, CategoryID)[]
             -> A list of brands and their brand ids (BrandID, BrandName)[]
             -> A list of categories and the ids (CategoryID, CategoryName)[]
-        Manual restock (InvID, PID, quantity, ManID)[]
-            -> Confirmation and updated inventory (PID, ProductName)[]
+        Manual restock (InvID, PIDs, quantities, ManID, passkey)[]
+            -> Confirmation and updated inventory (Boolean, RestockID, InvID, message)[] *FINISHED (placeRestock.py)*
 
 In store Payment
     Products they buy and if they have an account
     ------
     Stuff that will be sent to the server
-        Pay for order NO account (CID, Card Number, CVV, Street, City, State, Zipcode, (PID, quantity)[])
-            -> A confirmation as to whether their payment went through and a message explaining failure (boolean, message)
-        Pay for order account (CID, (PID, quantity)[])
-            -> A confirmation as to whether their payment went through and a message explaining failure (boolean, message)
-
-        Pay for order NO Acccount (InvID, PID, quantity)[]
-            -> A confirmation (boolean)
-        Pay for order Account (InvID, CID, (PID, quantity)[])
-            -> A confirmation (boolean)
+        Pay for order NO Acccount (InvID, PIDs, quantities)[] *FINISHED (inStoreOrderNoAcc.py)*
+            -> A confirmation (boolean, OrderID, message)
+        Pay for order Account (email, InvID, PIDs, quantities)[]) *FINISHED (inStoreOrderAcc.py)*
+            -> A confirmation (boolean, OrderID, message)
