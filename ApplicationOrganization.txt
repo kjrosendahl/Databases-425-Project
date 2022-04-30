@@ -118,8 +118,9 @@ View Acccount history
     Stuff that will be sent to the server
         Page request
             -> A page to display stuff
-            -> Existing credit and credit available (Card Number, credit)
-            -> Order history (PID, ProductName, price)[]
+            -> Existing credit and credit available (Card Number, credit) *FIINISHED (see above): requestCredit.py*
+            -> Order history (OrderID, day, month, year, total, tracking number, status)[] *FINISHED (requestOrders.py)*
+            -> Order details (PID, ProductName, Quantity, Price) *FINISHED (requestOrderDetails.py)*
 
 Modify Acccount
     Change credit card
@@ -129,19 +130,24 @@ Modify Acccount
     Stuff that will be sent to the server
         Page request
             -> A page to display stuff
-            -> Their information (CID, Name, email)
-            -> Existing credit and credit available (Card Number, credit)
-            -> Order history (PID, ProductName, price)[]
+            -> Their information (CID, Name, email) *FINISHED (requestAccInfo.py)*
+            -> Existing credit and credit available (Card Number, CVV, credit) *FINISHED (see above): requestCredit.py*
+            -> Order history (OrderID, day, month, year, total, tracking number, status)[] *FINISHED (see above): requestOrders.py)*
         Credit Card Change (CID, Card Number, CVV)
-            -> Confirmation (boolean, card number)
+            -> Confirmation (boolean, card number) *FINISHED (changeCredit.py)*
         Address change (CID, Street, City, State, Zipcode)
-            -> Confirmation (boolean, Street, City, State, Zipcode)
-        Email Change (CID, email)
-            -> Confirmation (boolean, email)
-        Password Change (CID, oldPassword, newPassword)
+            -> Confirmation (boolean, Street, City, State, Zipcode) *FINISHED (changeAddress.py)*
+        Password Change (CID, oldPassword, newPassword) *FINISHED (changePassword.py)*
             -> Confirmation (boolean)
-        Delete Account (CID)
+        Delete Account (CID) *FINISHED (deleteAcc.py)*
             -> Confirmation (boolean)
+            
+ ^^^^^^^^^^
+ ~ Kaylee's notes for Modify Account
+ -- customers can't change their email, as the online account is tied to their email
+ -- deleting account removes their account info, including credit card information and address 
+ 
+ 
 
 ---------------------------------  EMPLOYEES ------------------------------------ Who we don't care about
 Employee Login
