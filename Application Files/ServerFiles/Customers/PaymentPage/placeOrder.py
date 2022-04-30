@@ -5,7 +5,7 @@ placing orders through the website
 Does the following: 
 1) calculates the total 
 2) checks that the customer has enough credit to place the order
-3) checks the quantities are valid
+3) checks the quantities are valid, and that PIDs/InvIDs are valid
 4) creates a new record for the order
 5) inserts the products of the order into the OrderProd relation 
 6) generates the tracking number and randomly chooses a shipping company
@@ -20,16 +20,19 @@ def placeOrder(CID, InvID, PIDs, Quantities):
     day = dt.day
     month = dt.month
     year = dt.year
-    status = "Pending"   
+    status = "Pending" 
+    typeOrder = "Online"
     total = 0 
     
-    # make sure that quantites are right. Calculate total 
+    # make sure that quantites, product, inventories are right. Calculate total 
     for i in range(items): 
         PID = PIDs[i]
         q = Quantities[i]
         sql = """select Quantity, Price from ProdInv where InvID = :InvID and PID = :PID"""
         x = (cursor.execute(sql, [InvID, PID])).fetchall()
-        if x[0][0] < q: 
+        if not x: 
+            return(False, 'null', 'null', 'Order failed. Wrong Product or Inventory entered.')
+        elif x[0][0] < q: 
             return(False, 'null', 'null', "Order failed. Too many products entered.")
         else: 
             total = total + q*(x[0][1])
@@ -52,8 +55,8 @@ def placeOrder(CID, InvID, PIDs, Quantities):
         else: 
             OrderID = x[0][0] + 1 
         
-        sql = """insert into Orders values (:OrderID, :CID, :InvID, :status, :total, :day, :month, :year)"""
-        x = cursor.execute(sql, [OrderID, CID, InvID, status, total, day, month, year])
+        sql = """insert into Orders values (:OrderID, :CID, :InvID, :status, :typeOrder, :total, :day, :month, :year)"""
+        x = cursor.execute(sql, [OrderID, CID, InvID, status, typeOrder, total, day, month, year])
     except: 
         return(False, 'null', 'null', "Something went wrong. Please try again.")
     
