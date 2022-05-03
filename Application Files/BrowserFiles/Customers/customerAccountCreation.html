@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account Creation</title>
 
+    <script src="../univs/axios.min.js"></script>
+
     <link rel="stylesheet" href="universalStyles.css">
     <style>
         #content {
@@ -113,6 +115,14 @@
             // Send it to server
             // If good, redirect
             // If bad, tell them no
+            axios.post('/user', {
+                firstName: 'Fred',
+                lastName: 'Flintstone'
+            }).then(function (response) {
+                console.log(response);
+            }).catch(function (error) {
+                console.log(error);
+            });
         }
     </script>
 </body>
