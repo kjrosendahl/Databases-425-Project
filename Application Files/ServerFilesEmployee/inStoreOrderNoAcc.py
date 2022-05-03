@@ -11,7 +11,7 @@ Does the following:
 
 """
 
-def inStoreOrderNoAcc(InvID, PIDs, Quantities): 
+def inStoreOrderNoAcc(InvID: int, PIDs: list[int], Quantities: list[int]): 
     try:
         items = len(PIDs)
         dt = datetime.datetime.today()

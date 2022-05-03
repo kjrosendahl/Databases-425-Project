@@ -1,5 +1,5 @@
 # Customer: enter credit card 
-def createCreditCard(CID, CardNo, CVV): 
+def createCreditCard(CID: int, CardNo: int, CVV: int): 
     try: 
         try: 
             credit = 1000

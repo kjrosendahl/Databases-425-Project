@@ -1,6 +1,6 @@
 # customers with accounts may change their card info 
 # returns boolean, card number or error message 
-def changeCard(CID, CardNumber, CVV):
+def changeCard(CID: int, CardNumber: int, CVV: int):
     try: 
         credit = 1000
         

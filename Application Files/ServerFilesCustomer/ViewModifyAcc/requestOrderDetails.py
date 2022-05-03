@@ -2,7 +2,7 @@
 # requires email and orderID
 # checks to see if orderID is valid or if they have the authorization 
 # returns either a list of tuples in the form (PID, ProductName, Quantity, Price), or the appropriate error message 
-def requestOrderDetails(email, OID): 
+def requestOrderDetails(email: str, OID: int): 
     sql = """select CID from Orders where OrderID = :OID"""
     x = (cursor.execute(sql, [OID])).fetchall()
     if not x: 

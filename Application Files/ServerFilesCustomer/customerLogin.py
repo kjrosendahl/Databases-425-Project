@@ -1,4 +1,4 @@
-def loginVerification(email, pa):
+def loginVerification(email: str, pa: str):
     try: 
         sql = """select CID from OnlineAcc where email = (:email) and password = (:password)"""
         

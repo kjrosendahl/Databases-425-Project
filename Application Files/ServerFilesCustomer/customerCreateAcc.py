@@ -1,5 +1,5 @@
 # Customer: create account (requires Customer ID, email/password)
-def createAccount(CID, email, password):
+def createAccount(CID: int, email: str, password: str):
     try: 
         try: 
             sql = """insert into OnlineAcc values (:CID, :email, :password)"""

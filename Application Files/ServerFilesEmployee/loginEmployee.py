@@ -1,6 +1,6 @@
 # employee: login verification 
 # returns boolean and message, or EID
-def loginVerificationEmployee(EID, password): 
+def loginVerificationEmployee(EID: int, password: str): 
     try: 
         sql = """select password from Employees where EmpID = :EID"""
         x = (cursor.execute(sql, [EID])).fetchall()

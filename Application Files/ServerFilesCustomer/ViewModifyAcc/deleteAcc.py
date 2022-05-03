@@ -1,7 +1,7 @@
 # customers may delete their account 
 # deletes their Account, card info, and address
 # returns boolean, message
-def deleteAcc(CID): 
+def deleteAcc(CID: int): 
     try: 
         sql = """delete from OnlineAcc where CID = :CID"""
         cursor.execute(sql, [CID])

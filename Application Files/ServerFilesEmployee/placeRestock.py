@@ -11,7 +11,7 @@ Does the following:
 5.b) if the product wasn't in the inventory to start, creates a new record for the product in Inventory, then updates  
 
 """
-def placeRestock(InvID, PIDs, Quantities, ManID, passkey): 
+def placeRestock(InvID: int, PIDs: list[int], Quantities: list[int], ManID: int, passkey: str): 
     items = len(PIDs)
     dt = datetime.datetime.today()
     day = dt.day

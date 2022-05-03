@@ -14,7 +14,7 @@ Does the following:
 
 """
 
-def placeOrder(CID, InvID, PIDs, Quantities): 
+def placeOrder(CID: int, InvID: int, PIDs: list[int], Quantities: list[int]): 
     items = len(PIDs)
     dt = datetime.datetime.today()
     day = dt.day

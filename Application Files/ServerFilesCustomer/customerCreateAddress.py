@@ -1,5 +1,5 @@
 # Customer: enter address
-def createAddress(CID, street, city, state, zipcode): 
+def createAddress(CID: int, street: str, city: str, state: str, zipcode: int): 
     try: 
         try:
             sql = """insert into CustAddress values (:CID, :street, :city, :state, :zipcode)"""

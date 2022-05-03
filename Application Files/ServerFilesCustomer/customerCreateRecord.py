@@ -1,5 +1,5 @@
 # Customer: create a new record
-def newCustomerRecord(Name): 
+def newCustomerRecord(Name: str): 
     try: 
         sql = """select max(CID) from Customer"""
         cursor.execute(sql)  

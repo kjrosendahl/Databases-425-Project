@@ -11,7 +11,7 @@ Does the following:
 8) (through triggers) automatically decreases the inventory quantity accordingly
 
 """
-def inStoreOrderAcc(email, InvID, PIDs, Quantities): 
+def inStoreOrderAcc(email: str, InvID: int, PIDs: list[int], Quantities: list[int]): 
     try:
         items = len(PIDs)
         dt = datetime.datetime.today()
