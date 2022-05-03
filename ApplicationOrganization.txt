@@ -76,10 +76,8 @@ Ordering Online Page (Folder: OnlineOrdering)
             -> A list of categories and the ids (CategoryID, CategoryName)[] *FINISHED (CatIDSearch.py)*
         Request for store/warehouse inventory (InvID)
             -> The respective inventory (PID, ProductName, price, quantity, BrandName, CateogryName)[] *FINISHED (InvRequest.py)*
-        Limit by brand (InvId, BrandID)
-            -> Search results (PID, ProductName, price, quantity, CategoryName)[] *FINISHED (InvRequestLimitBrand.py)*
-        Limit by category (InvId, CategoryID)
-            -> Search results (PID, ProductName, price, quantity, BrandName)[] *FINISHED (InvRequestLimitCat.py)*
+        Search by brand and/or category (InvID, BrandID, CategoryID)
+            -> Search results (PID, ProductName, price, quantity, BrandName, CategoryName)[]
 
 Customer Payment Page (Folder: PaymentPage)
     This is the page where they will actually pay for stuff
