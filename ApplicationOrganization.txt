@@ -53,7 +53,7 @@ Customer Account Creation
     Stuff that will be sent to the server
         Page request
             -> A page to display stuff
-        Create account (email, password)
+        Create account (CID, email, password)
             -> Was account creation successful, cid if it was, message if not (boolean, cid, message) *FINISHED (customerCreateAcc.py)*
         Add Credit card (CID, Card Number, CVV)
             -> was card add successfull (boolean, CID, message) *FINISHED (customerCreateCard.py)*
@@ -92,16 +92,11 @@ Customer Payment Page (Folder: PaymentPage)
             -> A page to display stuff
             -> Existing credit cards (Card Number, CVV) *FINISHED (requestCredit.py)*
             -> Existing addresses (Street, City, State, Zipcode) *FINISHED (requestAddress.py)*
-        Pay for order NO account (InvID, Name, Card Number, CVV, Street, City, State, Zipcode, (PID, quantity)[])
+        Pay for order NO account (InvID, CID, Card Number, CVV, Street, City, State, Zipcode, (PID, quantity)[])
             -> A confirmation as to whether their payment went through and a message explaining failure (boolean, tracking info, shipping name, message) *FINISHED (
         Pay for order account (InvID, CID, (PID, quantity)[])
             -> A confirmation as to whether their payment went through and a message explaining failure (boolean, tracking info, shipping name, message) *FINISHED*
             *(both in placeOrder.py)*
-
- ^^^^^^^^^^^
- ~ Noah's most recent changes to this
- -- Pay for order no account now has a Name paramater that will be sent to the server instead of a CID
- -- That should be enough to create a new Customer CID every time that happens
             
  ^^^^^^^^^^^
  ~ Kaylee's Notes for placeOrder
