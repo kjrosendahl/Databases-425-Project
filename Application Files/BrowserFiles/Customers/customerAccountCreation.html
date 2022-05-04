@@ -115,9 +115,10 @@
             // Send it to server
             // If good, redirect
             // If bad, tell them no
-            axios.post('/user', {
-                firstName: 'Fred',
-                lastName: 'Flintstone'
+            axios.post('/customer/createAccount', {
+                CID: "7",
+                email: "noah.baxley@gmail.com",
+                password: "12345678"
             }).then(function (response) {
                 console.log(response);
             }).catch(function (error) {
