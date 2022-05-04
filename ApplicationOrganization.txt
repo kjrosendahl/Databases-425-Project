@@ -31,7 +31,7 @@ List of site pages
 ---------------------------------  CUSOMERS ------------------------------------ Who we do care about
 Customer enters Application and does not already have an account: 
     New customer record (Name)
-        -> new customer record (boolean, cid) *FINISHED*
+DONE    -> new customer record (boolean, cid) *FINISHED*
 Customer Login
     The page itself is just a login screen
     Will send to the server an email and password 
@@ -40,7 +40,7 @@ Customer Login
     Stuff that will be sent to the server
         Page request
             -> A page to display stuff   
-        Login verfication (email, password)
+DONE    Login verfication (email, password)
             -> A confirmation of whether the email/pwd is incorrect and a CID if it is (boolean, CID) *FINISHED (customerCreateRecord.py)*
             
 ^^^^^^^^^^^^^
@@ -53,11 +53,11 @@ Customer Account Creation
     Stuff that will be sent to the server
         Page request
             -> A page to display stuff
-        Create account (CID, email, password)
+DONE    Create account (CID, email, password, Card Number, CVV, street, city, state, zipcode)
             -> Was account creation successful, cid if it was, message if not (boolean, cid, message) *FINISHED (customerCreateAcc.py)*
-        Add Credit card (CID, Card Number, CVV)
+DONE    Add Credit card (CID, Card Number, CVV)
             -> was card add successfull (boolean, CID, message) *FINISHED (customerCreateCard.py)*
-        Add address (CID, street, city, state, zipcode)
+DONE    Add address (CID, street, city, state, zipcode)
             -> was address add successfull (boolean, CID, message) *FINISHED (customerCreateAddress.py)*
 
 
