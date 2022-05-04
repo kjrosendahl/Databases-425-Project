@@ -1,7 +1,8 @@
 # Customer: create account (requires Customer ID, email/password)
-def createAccount(CID: int, email: str, password: str):
+def createAccount(connection, CID: int, email: str, password: str):
     try: 
         try: 
+            cursor = connection.cursor()
             sql = """insert into OnlineAcc values (:CID, :email, :password)"""
             cursor.execute(sql, [CID, email, password])
             

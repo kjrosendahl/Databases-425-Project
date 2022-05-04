@@ -1,6 +1,7 @@
 # Customer: enter credit card 
-def createCreditCard(CID: int, CardNo: int, CVV: int): 
-    try: 
+def createCreditCard(connection, CID: int, CardNo: int, CVV: int): 
+    try:
+        cursor = connection.cursor()
         try: 
             credit = 1000
             sql = """insert into Credit values (:CID, :CardNo, :CVV, :credit)"""

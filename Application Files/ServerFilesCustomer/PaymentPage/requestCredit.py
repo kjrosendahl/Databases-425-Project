@@ -1,6 +1,7 @@
 # customer may request their credit card info. Returns T/F, tuple of card info or null, and message
-def requestCredit(CID: int):
-    try: 
+def requestCredit(connection, CID: int):
+    try:
+        cursor = connection.cursor()
         sql = """select * from Credit where CID = :CID"""
         cursor.execute(sql, [CID])
         x = cursor.fetchall()

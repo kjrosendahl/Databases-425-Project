@@ -1,6 +1,7 @@
 # returns a list of the products, product info when given an inventory ID. May limit by brandID and catID, otherwise, enter null.
-def InvRequest(ID, brandID, catID): 
-    try: 
+def InvRequest(connection, ID, brandID, catID): 
+    try:
+        cursor = connection.cursor()
         if not catID and not brandID: 
             sql = """select PID, ProductName, Price, Quantity, BrandName, CategoryName from ProdInv natural join 
                     Products natural join Brands natural join Categories where InvID = :ID"""

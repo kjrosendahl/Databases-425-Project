@@ -1,6 +1,7 @@
 # returns a list of InventoryIDs, Name, and Addresses of Stores
-def searchStoreInvID(): 
-    try: 
+def searchStoreInvID(connection): 
+    try:
+        cursor = connection.cursor()
         sql = """select InvID, Name, Street, City, State, Zipcode from Inventory natural join Stores natural join Addresses"""
         cursor.execute(sql)
         x = cursor.fetchall()

@@ -1,6 +1,7 @@
 # returns a list of brandIDs and their name
-def searchBrandID():
-    try: 
+def searchBrandID(connection):
+    try:
+        cursor = connection.cursor()
         sql = """select * from Brands"""
         cursor.execute(sql)
         x = cursor.fetchall()

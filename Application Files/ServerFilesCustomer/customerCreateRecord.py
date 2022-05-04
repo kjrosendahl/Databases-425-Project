@@ -1,6 +1,8 @@
 # Customer: create a new record
-def newCustomerRecord(Name: str): 
-    try: 
+def newCustomerRecord(connection, Name: str): 
+    try:
+        cursor = connection.cursor()
+        
         sql = """select max(CID) from Customer"""
         cursor.execute(sql)  
         x = cursor.fetchall()

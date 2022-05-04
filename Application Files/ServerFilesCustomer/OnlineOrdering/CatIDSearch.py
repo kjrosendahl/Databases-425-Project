@@ -1,6 +1,7 @@
 # returns a list of CategoryIDs and their name
-def searchCatID():
-    try: 
+def searchCatID(connection):
+    try:
+        cursor = connection.cursor()
         sql = """select * from Categories"""
         cursor.execute(sql)
         x = cursor.fetchall()

@@ -1,8 +1,9 @@
 # customers may change password 
 # returns boolean, message 
 # only fulfills request if old password is entered correctly 
-def changePassword(CID: int, oldPass: str, newPass: str): 
-    try: 
+def changePassword(connection, CID: int, oldPass: str, newPass: str): 
+    try:
+        cursor = connection.cursor()
         sql = """select Password from OnlineAcc where CID = :CID"""
         x = (cursor.execute(sql, [CID])).fetchall()
         if x[0][0] != oldPass: 

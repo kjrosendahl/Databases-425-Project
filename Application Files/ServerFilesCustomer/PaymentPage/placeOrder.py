@@ -14,7 +14,12 @@ Does the following:
 
 """
 
-def placeOrder(CID: int, InvID: int, PIDs: list[int], Quantities: list[int]): 
+import datetime
+import random
+
+
+def placeOrder(connection, CID: int, InvID: int, PIDs: list[int], Quantities: list[int]): 
+    cursor = connection.cursor()
     items = len(PIDs)
     dt = datetime.datetime.today()
     day = dt.day

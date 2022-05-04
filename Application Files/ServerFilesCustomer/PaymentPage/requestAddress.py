@@ -1,6 +1,7 @@
 # customer may request their address info. Returns T/F, tuple of info or null, message
-def requestAddress(CID: int):
-    try: 
+def requestAddress(connection, CID: int):
+    try:
+        cursor = connection.cursor()
         sql = """select * from CustAddress where CID = :CID"""
         cursor.execute(sql, [CID])
         x = cursor.fetchall()

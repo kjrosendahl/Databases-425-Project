@@ -1,5 +1,6 @@
-def loginVerification(email: str, pa: str):
-    try: 
+def loginVerification(connection, email: str, pa: str):
+    try:
+        cursor = connection.cursor()
         sql = """select CID from OnlineAcc where email = (:email) and password = (:password)"""
         
         # query result 

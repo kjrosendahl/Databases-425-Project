@@ -1,7 +1,8 @@
 # customers with accounts may change their card info 
 # returns boolean, card number or error message 
-def changeCard(CID: int, CardNumber: int, CVV: int):
-    try: 
+def changeCard(connection, CID: int, CardNumber: int, CVV: int):
+    try:
+        cursor = connection.cursor()
         credit = 1000
         
         sql = """update Credit set CardNo = :CardNumber, CVV = :CVV, credit = :credit where CID = :CID"""
