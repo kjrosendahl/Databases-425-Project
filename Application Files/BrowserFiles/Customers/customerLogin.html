@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Login</title>
 
+    <script src="../univs/axios.min.js"></script>
+
     <link rel="stylesheet" href="universalStyles.css">
     <style>
         #content {
@@ -26,20 +28,30 @@
             <input type="email" id="userEmail">
             <p>Password</p>
             <input type="password" id="userPassword"><br>
-            <input type="button" id="submit" value="Log In">
+            <input type="button" id="submit" value="Log In"><span id="error"></span>
         </div>
     </div>
     <script>
         document.getElementById("submit").addEventListener('click', () => {
+            document.getElementById("error").innerHTML = "";
             let email = document.getElementById("userEmail").value;
             let pwd = document.getElementById("userPassword").value;
-            sendToServer(email,pwd)
+            axios.post('/customer/verifyLogin', {
+                "email": email,
+                "password": pwd
+            }).then( response => {
+                console.log(response)
+                if (response.data.success == true) {
+                    CID = response.data.CID;
+                    localStorage.setItem("customerCID", CID);
+                    console.warn("Redirect needs to be implemented")
+                } else {
+                    document.getElementById("error").innerHTML = response.data.message;
+                }
+            }).catch( error => {
+                alert("Something went wrong contacting the server");
+            });
         });
-        function sendToServer(email, pwd) {
-            // Send it to server
-            // If good, redirect
-            // If bad, tell them no
-        }
     </script>
 </body>
 </html>

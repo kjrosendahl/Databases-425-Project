@@ -10,8 +10,8 @@ def loginVerification(connection, email: str, pa: str):
         
         # if account exists, return CID
         if x: 
-            return (True, x[0][0])
+            return (True, x[0][0], "Account verified")
         else: 
-            return (False, None)
+            return (False, None, "Login information incorrect")
     except DBFailure: 
         print('Something went wrong. Please try again.')

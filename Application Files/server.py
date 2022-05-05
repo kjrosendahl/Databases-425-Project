@@ -40,12 +40,17 @@ def handlePOST(pathStr: str, params: dict, outStream: io.BufferedIOBase):
                 acc = loginVerification(CONNECTION, params["email"], params["password"])
                 ret = {
                     "success": acc[0],
-                    "CID": acc[1]
+                    "CID": acc[1],
+                    "message": acc[2]
                 }
+                if acc[0]:
+                    print("Login Success")
+                else:
+                    print("Login Failure")
                 outStream.write(str.encode(json.dumps(ret)))
             else:
                 print("Incorrect data")
-                outStream.write(str.encode(json.dumps({"success": False,"message": "Incorrect number of arguments"})))
+                outStream.write(str.encode(json.dumps({"success": False, "message": "Incorrect number of arguments"})))
 
         case "/customer/createAccount":
             print("Creating Online Account")
