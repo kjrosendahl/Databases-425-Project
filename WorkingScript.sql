@@ -44,8 +44,8 @@ primary key (InvID)
 create table Addresses 
 ( 
 AddressID varchar(6), 
-Street varchar(20), 
-City varchar(20), 
+Street varchar(60), 
+City varchar(40), 
 State char(2), 
 Zipcode char(5), 
 Region varchar(10) check (Region in ('Northeast', 'Southwest', 'West', 'Southeast', 'Midwest')),
