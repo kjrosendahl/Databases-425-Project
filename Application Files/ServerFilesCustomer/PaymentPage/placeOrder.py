@@ -14,20 +14,14 @@ Does the following:
 
 """
 
-import datetime
 import random
 
 
-def placeOrder(connection, CID: int, InvID: int, PIDs: list[int], Quantities: list[int]): 
+def placeOrder(connection, CID: int, InvID: int, PIDs: list[int], Quantities: list[int], cardNo=False): 
     cursor = connection.cursor()
     items = len(PIDs)
-    dt = datetime.datetime.today()
-    day = dt.day
-    month = dt.month
-    year = dt.year
-    status = "Pending" 
-    typeOrder = "Online"
-    total = 0 
+    status = 'Pending'
+    total = 0
     
     # make sure that quantites, product, inventories are right. Calculate total 
     for i in range(items): 
@@ -42,14 +36,23 @@ def placeOrder(connection, CID: int, InvID: int, PIDs: list[int], Quantities: li
         else: 
             total = total + q*(x[0][1])
             
-    # decrease credit 
-    sql = """select credit from Credit where CID = :CID"""
-    x = (cursor.execute(sql, [CID])).fetchall()[0][0]
-    if x < total: 
-        return(False, 'null', 'null', "Order failed. You do not have enough credit.")
-    else: 
-        sql = """update Credit set credit = credit - :total where CID = :CID"""
-        x = (cursor.execute(sql, [total, CID]))
+    # decrease credit
+    if not cardNo:
+        sql = """select credit from Credit where CID = :CID"""
+        x = (cursor.execute(sql, [CID])).fetchall()[0][0]
+        if x < total: 
+            return(False, 'null', 'null', "Order failed. You do not have enough credit.")
+        else: 
+            sql = """update Credit set credit = credit - :total where CID = :CID"""
+            x = (cursor.execute(sql, [total, CID]))
+    else:
+        sql = """select credit from Credit where CardNo = :cardNo"""
+        x = (cursor.execute(sql, [cardNo])).fetchall()[0][0]
+        if x < total: 
+            return(False, 'null', 'null', "Order failed. You do not have enough credit.")
+        else: 
+            sql = """update Credit set credit = credit - :total where CID = :CID"""
+            x = (cursor.execute(sql, [total, CID]))
             
     # create new order record 
     try: 
@@ -60,9 +63,11 @@ def placeOrder(connection, CID: int, InvID: int, PIDs: list[int], Quantities: li
         else: 
             OrderID = x[0][0] + 1 
         
-        sql = """insert into Orders values (:OrderID, :CID, :InvID, :status, :typeOrder, :total, :day, :month, :year)"""
-        x = cursor.execute(sql, [OrderID, CID, InvID, status, typeOrder, total, day, month, year])
-    except: 
+        # I removed 'typeOrder' from the inserted values. It isn't used in the DB
+        sql = """insert into Orders values (:OrderID, :CID, :InvID, :status, :total, CURRENT_DATE)"""
+        x = cursor.execute(sql, [OrderID, CID, InvID, status, total])
+    except Exception as e:
+        print(e) 
         return(False, 'null', 'null', "Something went wrong. Please try again.")
     
     # insert the products ordered into the OrderProd relation
@@ -78,7 +83,7 @@ def placeOrder(connection, CID: int, InvID: int, PIDs: list[int], Quantities: li
     if x[0][0] is None: 
         trackNo = 1
     else: 
-        trackNo = x[0][0] + 1
+        trackNo = int(x[0][0]) + 1
         
     # randomly choose shipping company
     sql = """select * from Shipping"""
@@ -92,4 +97,5 @@ def placeOrder(connection, CID: int, InvID: int, PIDs: list[int], Quantities: li
     x = (cursor.execute(sql, [OrderID, ShipID, trackNo]))
     
     connection.commit()
+    print("Order has been placed succcessfully")
     return(True, trackNo, comp, "Order placed.")
