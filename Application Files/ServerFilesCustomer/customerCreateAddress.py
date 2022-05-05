@@ -8,7 +8,8 @@ def createAddress(connection, CID: int, street: str, city: str, state: str, zipc
             
             connection.commit()
             return(True, CID, "Address added successfully.")
-        except: 
+        except Exception as E: 
+            print("Address Failed", E)
             return(False, CID, "Address unsuccessful. Please enter a valid address.")
     except: 
         return(False, CID, "Something went wrong. Please try again.")

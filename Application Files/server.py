@@ -18,15 +18,20 @@ CONNECTION = cx_Oracle.connect(
 def handlePOST(pathStr: str, params: dict, outStream: io.BufferedIOBase):
     match pathStr:
         case "/customer/createCustomer":
-            print("Creating Customer")
-            from ServerFilesCustomer.customerCreateRecord import newCustomerRecord
-            acc = newCustomerRecord(CONNECTION, params["name"])
-            print(acc)
-            ret = {
-                "success": acc[0],
-                "CID": acc[1]
-            }
-            outStream.write(str.encode(json.dumps(ret)))
+            print("Creating new Customer")
+            if "name" in params.keys():
+                print("Creating Customer")
+                from ServerFilesCustomer.customerCreateRecord import newCustomerRecord
+                acc = newCustomerRecord(CONNECTION, params["name"])
+                print(acc)
+                ret = {
+                    "success": acc[0],
+                    "CID": acc[1]
+                }
+                outStream.write(str.encode(json.dumps(ret)))
+            else:
+                print("Incorrect data")
+                outStream.write(str.encode(json.dumps({"success": False,"message": "Incorrect number of arguments"})))
 
         case "/customer/verifyLogin":
             print("Veriftying login information")
@@ -45,7 +50,7 @@ def handlePOST(pathStr: str, params: dict, outStream: io.BufferedIOBase):
         case "/customer/createAccount":
             print("Creating Online Account")
             # First check if we have the correct data
-            if "CID" in params.keys and "email" in params.keys and "password" in params.keys and "cardNumber" in params.keys and "CVV" in params.keys and "street" in params.keys and "city" in params.keys and "state" in params.keys and "zipcode" in params.keys:
+            if "CID" in params.keys() and "email" in params.keys() and "password" in params.keys() and "cardNumber" in params.keys() and "street" in params.keys() and "city" in params.keys() and "state" in params.keys() and "zipcode" in params.keys():
                 
                 # First create the onlineAcc
                 from ServerFilesCustomer.customerCreateAcc import createAccount
@@ -54,13 +59,19 @@ def handlePOST(pathStr: str, params: dict, outStream: io.BufferedIOBase):
 
                 # Add the credit card
                 from ServerFilesCustomer.customerCreateCard import createCreditCard
-                card = createCreditCard(CONNECTION, params["CID"], params["cardNumber"], params["CVV"])
+                card = createCreditCard(CONNECTION, params["CID"], params["cardNumber"])
                 print(card)
                 
                 # Add the address
                 from ServerFilesCustomer.customerCreateAddress import createAddress
-                addr = createAddress(acc["CID"], params["street"], params["city"], params["state"], params["zipcode"])
+                addr = createAddress(CONNECTION, params["CID"], params["street"], params["city"], params["state"], params["zipcode"])
                 print(addr)
+                if (not acc[0] or not card[0] or not addr[0]):
+                    from ServerFilesCustomer.ViewModifyAcc.deleteAcc import deleteAcc
+                    suc = deleteAcc(CONNECTION, params["CID"])
+                    if not suc[0]:
+                        print("Something went wrong trying to delete")
+
                 ret = {
                     "success": acc[0],
                     "message": acc[2],

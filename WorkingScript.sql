@@ -444,14 +444,15 @@ select OrderID, Odate, Total, TrackNo, Status
 from Orders natural join OnlineAcc natural join OrderShip
 where email = 'krosendahl@hawk.iit.edu';
 
-select OrderProd.PID, OrderProd.Quantity, Status, Price, ProductName
-from OrderProd natural join Orders inner join ProdInv on ProdInv.InvID = Orders.InvID and ProdInv.PID = OrderProd.PID inner join Products on ProdInv.PID = Products.PID
-where OrderID = 1;
+-- select OrderProd.PID, OrderProd.Quantity, Status, Price, ProductName
+-- from OrderProd natural join Orders inner join ProdInv on ProdInv.InvID = Orders.InvID and ProdInv.PID = OrderProd.PID inner join Products on ProdInv.PID = Products.PID
+-- where OrderID = 1;
+column used in NATURAL join cannot have qualifier
 
 select WID, Street, City, State, Zipcode, Region
 from Warehouses natural join Addresses;
 
-select PID, UPC, ProductName, BrandName, CategoryName, Quantity, Price
+select PID, ProductName, BrandName, CategoryName, Quantity, Price
 from ProdInv natural join Warehouses natural join Products natural join Brands natural join Categories
 where WID = '202';
 

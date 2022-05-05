@@ -1,5 +1,5 @@
 # Customer: create account (requires Customer ID, email/password)
-def createAccount(connection, CID: int, email: str, password: str):
+def createAccount(connection, CID: str, email: str, password: str):
     try: 
         try: 
             cursor = connection.cursor()
@@ -9,7 +9,8 @@ def createAccount(connection, CID: int, email: str, password: str):
             connection.commit()
             return(True, CID, "Account created successfully.")
             
-        except: 
+        except Exception as E:
+            print("Account Failed", E)
             return(False, CID, "Account unsuccessful. Please enter a unique email. Passwords must be at least 6 characters.")
         
     except: 
