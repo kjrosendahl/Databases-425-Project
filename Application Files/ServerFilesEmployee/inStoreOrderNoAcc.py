@@ -13,7 +13,7 @@ Does the following:
 
 from ServerFilesCustomer.customerCreateRecord import newCustomerRecord
 
-def inStoreOrderNoAcc(connection, InvID: int, PIDs: list[int], Quantities: list[int]): 
+def inStoreOrderNoAcc(connection, InvID: int, PIDs: list[int], Quantities: list[int]) -> tuple[bool, str, str]: 
     try:
         cursor = connection.cursor()
         items = len(PIDs)
@@ -29,7 +29,7 @@ def inStoreOrderNoAcc(connection, InvID: int, PIDs: list[int], Quantities: list[
             sql = """select Quantity, Price from ProdInv where InvID = :InvID and PID = :PID"""
             x = (cursor.execute(sql, [InvID, PID])).fetchall()
             if not x: 
-                return(False, 'null', 'null', 'Order failed. Wrong Product or Inventory entered.')
+                return(False, 'null', 'Order failed. Wrong Product or Inventory entered.')
             elif x[0][0] < q: 
                 return(False, 'null', "Order failed. Too many products entered.")
             else: 
