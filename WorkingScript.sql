@@ -487,9 +487,9 @@ or InvID in (select InvID from Addresses natural join Warehouses where Region = 
 -- orders of a certain store 
 select * 
 from Orders natural join OrderProd natural join Products
-where InvID in (select InvID from Addresses natural join Stores where SID = '102')
+where InvID in (select InvID from Addresses natural join Stores where SID = '102');
 -- or a certain warehouse
 select * 
 from Orders natural join OrderProd natural join Products
-where InvID in (select InvID from Addresses natural join Warehouses where WID = '201')
+where InvID in (select InvID from Addresses natural join Warehouses where WID = '201');
 
