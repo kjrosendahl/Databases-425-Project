@@ -11,7 +11,7 @@ Does the following:
 8) (through triggers) automatically decreases the inventory quantity accordingly
 
 """
-def inStoreOrderAcc(connection, email: str, InvID: int, PIDs: list[int], Quantities: list[int]): 
+def inStoreOrderAcc(connection, email: str, InvID: int, PIDs: list[int], Quantities: list[int]) -> tuple[bool, str, str]: 
     try:
         cursor = connection.cursor()
         items = len(PIDs)
@@ -32,7 +32,7 @@ def inStoreOrderAcc(connection, email: str, InvID: int, PIDs: list[int], Quantit
             sql = """select Quantity, Price from ProdInv where InvID = :InvID and PID = :PID"""
             x = (cursor.execute(sql, [InvID, PID])).fetchall()
             if not x: 
-                return(False, 'null', 'null', 'Order failed. Wrong Product or Inventory entered.')
+                return(False, 'null', 'Order failed. Wrong Product or Inventory entered.')
             elif x[0][0] < q: 
                 return(False, 'null', "Order failed. Too many products entered.")
             else: 
