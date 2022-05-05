@@ -1,7 +1,9 @@
 # customers may change password 
 # returns boolean, message 
 # only fulfills request if old password is entered correctly 
-def changePassword(connection, CID: int, oldPass: str, newPass: str): 
+from typing import Tuple
+
+def changePassword(connection, CID: int, oldPass: str, newPass: str) -> Tuple[bool, str]: 
     try:
         cursor = connection.cursor()
         sql = """select Password from OnlineAcc where CID = :CID"""
