@@ -181,8 +181,8 @@ primary key (CID)
 create table CustAddress 
 (
 CID int,  
-Street varchar(20), 
-City varchar(20), 
+Street varchar(60), 
+City varchar(40), 
 State char(2), 
 Zipcode char(5), 
 primary key (CID), 
