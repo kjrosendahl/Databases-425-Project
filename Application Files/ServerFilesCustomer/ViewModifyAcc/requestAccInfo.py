@@ -29,4 +29,4 @@ def requestAccInfo(connection, CID: int):
         orders = "Orders not found."
     else:
         orders = a
-    return[info, credit, address, orders]
+    return[info, credit, address, orders, x[2]]
