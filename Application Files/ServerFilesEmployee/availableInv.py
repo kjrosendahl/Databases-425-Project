@@ -1,5 +1,5 @@
 # employee: returns a list of inventories
-def availableInv(connection) -> list[str]:
+def availableInv(connection) -> list[int]:
     try:
         cursor = connection.cursor()
         sql = """select InvID from Inventory"""
