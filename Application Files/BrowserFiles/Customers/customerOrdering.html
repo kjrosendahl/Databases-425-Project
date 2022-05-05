@@ -6,12 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ordering</title>
 
+    <script src="../univs/axios.min.js"></script>
+
     <link rel="stylesheet" href="universalStyles.css">
     <style>
         #content {
             display: flex;
             flex-direction: row;
             justify-content: space-around;
+        }
+        #cart {
+            text-align: center;
         }
     </style>
 </head>
@@ -26,50 +31,231 @@
             <h3>Select a store</h3>
             <select id="stores"></select>
             <h3>Limit by brand</h3>
-            <select id="brands"></select>
+            <select id="brands">
+                <option>None</option>
+            </select>
             <h3>Limit by category</h3>
-            <select id="categories"></select>
+            <select id="categories">
+                <option>None</option>
+            </select><br />
+            <input id="searchButton" type="button" value="Search"> 
             <h3>Select your item</h3>
             <select id="items"></select><br>
-            <input type="button" value="Modify It">
+            <input id="modifyButton" type="button" value="Modify It">
         </div>
         <div id="pane2">
-            <h2>Modify</h2>
+            <h2>Modify <span id="qItem"></span></h2>
             <h3>How many do you want?</h3>
             <input type="number" id="quantity"><br />
-            <input type="button" value="Add to Cart">
+            <input type="button" id="updateCart" value="Update Cart"><br />
+            <span style="display: none" id="modifyError">That number won't work bud</span>
         </div>
         <div id="pane3">
             <h2>Your Cart</h2>
+            <h3>Total: <span id="cartTotal"></span></h3>
             <table id="cart">
                 <tr>
                     <th>Item</th>
                     <th>Amount</th>
                     <th>Price</th>
                 </tr>
-                <tr label="01452">
-                    <td>Banans</td>
-                    <td>5</td>
-                    <td>$5</td>
-                    <td><input type="button" value="Remove"></td>
-                </tr>
-                <tr label="34586">
-                    <td>Sprigen</td>
-                    <td>3</td>
-                    <td>$32</td>
-                    <td><input type="button" value="Remove"></td>
-                </tr>
             </table>
+            <input type="button" id="payForOrder" value="Pay for Your Order"/>
         </div>
     </div>
     <script>
-        function askForThings() {
-            // We expect back a list of stuff, Idk whether this will be multiple things yet
-            
-            serverCom()
-            return []
+        // Get the CID
+        var CID = localStorage.getItem("customerCID")
+        if (CID == null) {
+            name = prompt('What name would you like to be known as', 'John');
+            if (name == null) {
+                alert("Something went wrong contacting the server");
+            } else {
+                axios.post('/customer/createCustomer', {
+                    "name": name
+                }).then( response => {
+                    if (response.data.success == true) {
+                        CID = response.data.CID;
+                        localStorage.setItem("customerCID", CID);
+                    } else {
+                        alert("Something went wrong contacting the server");
+                    }
+                }).catch( error => {
+                    alert("Something went wrong contacting the server");
+                });
+            }
         }
 
+        cart = {}
+        var curr;
+        var currentInv;
+
+        // Call the good ol page request
+        axios.post('/customer/orderOnlinePR',{}).then(function (response) {
+            console.log(response);
+            // get rid of current data
+            document.getElementById("stores").innerHTML = "";
+            document.getElementById("categories").innerHTML = "<option>None</option>";
+            document.getElementById("brands").innerHTML = "<option>None</option>";
+
+            // First populate stores with the response
+            invIDs = response.data.inv;
+            for (let i = 0; i < invIDs.length; i++) {
+                let opt = document.createElement("option");
+                    opt.value = invIDs[i][1];
+                    opt.innerHTML = invIDs[i][1];
+                    opt.dataset.index = invIDs[i][0]
+                document.getElementById("stores").add(opt)
+            }
+
+            catIDs = response.data.cats;
+            // Populate categories
+            for (let i = 0; i < catIDs.length; i++) {
+                let opt = document.createElement("option");
+                    opt.value = catIDs[i][1];
+                    opt.innerHTML = catIDs[i][1];
+                    opt.dataset.index = catIDs[i][0]
+                document.getElementById("categories").add(opt)
+            }
+
+            brandIDs = response.data.brand;
+            // Populate brands
+            for (let i = 0; i < brandIDs.length; i++) {
+                let opt = document.createElement("option");
+                    opt.value = brandIDs[i][1];
+                    opt.innerHTML = brandIDs[i][1];
+                    opt.dataset.index = brandIDs[i][0]
+                document.getElementById("brands").add(opt)
+            }
+
+            // Set up the search button
+            document.getElementById("searchButton").addEventListener('click', () => {
+                
+                // Get request data
+                let invID = invIDs[document.getElementById("stores").selectedIndex][0];
+
+                if (currentInv != invID) {
+                    currentInv = invID;
+                    cart = {};
+                    drawCart();
+                }
+
+                let catIDi = document.getElementById("categories").selectedIndex - 1;
+                let catID = (catIDi < 0) ? false : catIDs[catIDi][0]
+
+                let brandIDi = document.getElementById("brands").selectedIndex - 1;
+                let brandID = (brandIDi < 0) ? false : brandIDs[brandIDi][0]
+
+                axios.post('/customer/orderOnlineInvSearch', {
+                    invID: invID,
+                    catID: catID,
+                    brandID: brandID
+                }).then(function (response) {
+                    console.log(response);
+                    // Clear the old data
+                    document.getElementById("items").innerHTML = "";
+
+                    currentItems = response.data;
+
+                    // Populate the item field with this result
+                    for (let i = 0; i < response.data.length; i++) {
+                        let opt = document.createElement("option");
+                            opt.value = response.data[i].name;
+                            opt.innerHTML = response.data[i].name;
+                            opt.dataset.index = response.data[i].PID;
+                        document.getElementById("items").add(opt)
+                    }
+
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            });
+        }).catch(function (error) {
+            console.log(error);
+        });
+
+        // Set up modify button
+        document.getElementById("modifyButton").addEventListener('click', () => {
+            // First get the item info
+            curr = currentItems[document.getElementById("items").selectedIndex];
+
+            // Set the display
+            document.getElementById("qItem").innerHTML = curr.name;
+
+            // Is it in the cart already
+
+            if (!(curr.PID in cart)) {
+                cart[curr.PID] = {quantity: 0, name: curr.name, price: curr.price};
+            }
+
+            // Initialize and set the properties of the counter
+            document.getElementById("quantity").max = curr.quant
+            document.getElementById("quantity").value = cart[curr.PID].quantity;
+        });
+
+        // Set up the add to cart button
+        document.getElementById("updateCart").addEventListener('click', () => {
+            document.getElementById("modifyError").style.display = 'none'
+            v = document.getElementById("quantity").value;
+            if (v > curr.quant || v < 0) {
+                document.getElementById("modifyError").style.display = 'block';
+                return
+            }
+
+            // Update the value inside of the cart
+            cart[curr.PID].quantity = v;
+
+            // Now we get to have fun redrawing the cart wheeeeeeeeee.. Someone come kill me, I'm ded because of finals
+            drawCart()
+        });
+
+        function drawCart() {
+            table = document.getElementById("cart");
+            // Each row has 4 collumns with Item, ammount, price, and a remove button
+
+            // First delete all the old rows
+            while (table.rows.length > 1) {
+                table.deleteRow(1);
+            }
+
+            document.getElementById("cartTotal").innerHTML = "";
+
+            total = 0;
+
+            for (let i in cart) {
+                if (cart[i].quantity == 0) {
+                    break;
+                }
+                let a = table.insertRow();
+                    a.dataset.rowInfo = i;
+                (a.insertCell()).innerHTML = cart[i].name;
+                (a.insertCell()).innerHTML = cart[i].quantity;
+                (a.insertCell()).innerHTML = cart[i].price;
+                let t = document.createElement("input");
+                    t.type = 'button';
+                    t.value = 'Remove';
+                (a.insertCell()).appendChild(t);
+                t.addEventListener('click', function (ev) {
+                    console.log(ev.target.parentElement.parentElement)
+                    delete cart[ev.target.parentElement.parentElement.dataset.rowInfo];
+                    document.getElementById("modifyButton").click();
+                    drawCart();
+                });
+                total += cart[i].quantity * cart[i].price;
+            }
+            document.getElementById("cartTotal").innerHTML = "$" + total.toFixed(2)
+        }
+
+        document.getElementById("payForOrder").addEventListener('click', () => {
+            if (total == 0 || !total) {
+                console.log("merp, can't do that now")
+                return;
+            }
+
+            // Store the cart in local storage
+            localStorage.setItem("cart", JSON.stringify(cart));
+            window.location.href = window.location.origin + "/Customers/customerPayment.html"
+        });
     </script>
 </body>
 </html>
