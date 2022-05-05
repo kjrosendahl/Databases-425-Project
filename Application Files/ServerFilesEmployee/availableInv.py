@@ -1,6 +1,7 @@
 # employee: returns a list of inventories
-def availableInv():
-    try: 
+def availableInv(connection) -> list[str]:
+    try:
+        cursor = connection.cursor()
         sql = """select InvID from Inventory"""
         x = (cursor.execute(sql)).fetchall()
         i = [j[0] for j in x]

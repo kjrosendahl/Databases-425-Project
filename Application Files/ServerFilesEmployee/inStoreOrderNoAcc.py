@@ -11,18 +11,16 @@ Does the following:
 
 """
 
-def inStoreOrderNoAcc(InvID: int, PIDs: list[int], Quantities: list[int]): 
+from ServerFilesCustomer.customerCreateRecord import newCustomerRecord
+
+def inStoreOrderNoAcc(connection, InvID: int, PIDs: list[int], Quantities: list[int]): 
     try:
+        cursor = connection.cursor()
         items = len(PIDs)
-        dt = datetime.datetime.today()
-        day = dt.day
-        month = dt.month
-        year = dt.year
         status = "Complete"
-        typeOrder = "In Store"
         total = 0 
 
-        CID = newCustomerRecord('null')[1]
+        CID = newCustomerRecord(connection,'null')[1]
 
         # make sure that quantites, products, inventories are right. Calculate total 
         for i in range(items): 
@@ -45,8 +43,8 @@ def inStoreOrderNoAcc(InvID: int, PIDs: list[int], Quantities: list[int]):
         else: 
             OrderID = x[0][0] + 1 
 
-        sql = """insert into Orders values (:OrderID, :CID, :InvID, :status, :typeOrder, :total, :day, :month, :year)"""
-        x = cursor.execute(sql, [OrderID, CID, InvID, status, typeOrder, total, day, month, year])
+        sql = """insert into Orders values (:OrderID, :CID, :InvID, :status, :total, CURRENT_DATE)"""
+        x = cursor.execute(sql, [OrderID, CID, InvID, status, total])
 
         # insert the products ordered into the OrderProd relation
         for i in range(items): 

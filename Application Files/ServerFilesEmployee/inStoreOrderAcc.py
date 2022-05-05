@@ -11,15 +11,11 @@ Does the following:
 8) (through triggers) automatically decreases the inventory quantity accordingly
 
 """
-def inStoreOrderAcc(email: str, InvID: int, PIDs: list[int], Quantities: list[int]): 
+def inStoreOrderAcc(connection, email: str, InvID: int, PIDs: list[int], Quantities: list[int]): 
     try:
+        cursor = connection.cursor()
         items = len(PIDs)
-        dt = datetime.datetime.today()
-        day = dt.day
-        month = dt.month
-        year = dt.year
         status = "Complete"
-        typeOrder = "In Store"
         total = 0 
 
         sql = """select CID from OnlineAcc where email = :email"""
@@ -58,9 +54,8 @@ def inStoreOrderAcc(email: str, InvID: int, PIDs: list[int], Quantities: list[in
             OrderID = 1
         else: 
             OrderID = x[0][0] + 1 
-
-        sql = """insert into Orders values (:OrderID, :CID, :InvID, :status, :typeOrder, :total, :day, :month, :year)"""
-        x = cursor.execute(sql, [OrderID, CID, InvID, status, typeOrder, total, day, month, year])
+        sql = """insert into Orders values (:OrderID, :CID, :InvID, :status, :total, CURRENT_DATE)"""
+        x = cursor.execute(sql, [OrderID, CID, InvID, status, total])
 
         # insert the products ordered into the OrderProd relation
         for i in range(items): 

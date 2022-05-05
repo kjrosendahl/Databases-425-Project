@@ -11,17 +11,14 @@ Does the following:
 5.b) if the product wasn't in the inventory to start, creates a new record for the product in Inventory, then updates  
 
 """
-def placeRestock(InvID: int, PIDs: list[int], Quantities: list[int], ManID: int, passkey: str): 
+def placeRestock(connection, InvID: int, PIDs: list[int], Quantities: list[int], ManID: int, passkey: str): 
     items = len(PIDs)
-    dt = datetime.datetime.today()
-    day = dt.day
-    month = dt.month
-    year = dt.year
     status = "Pending"   
     default_q = 0
     default_price = 100
     
-    try: 
+    try:
+        cursor = connection.cursor()
         sql = """select passkey from Inventory where InvID = :InvID"""
         x = cursor.execute(sql, [InvID]).fetchall()
         if x[0][0] != passkey: 
@@ -49,8 +46,8 @@ def placeRestock(InvID: int, PIDs: list[int], Quantities: list[int], ManID: int,
         else: 
             RID = x[0][0] + 1 
 
-        sql = """insert into Restock values (:RID, :InvID, :ManID, :day, :month, :year, :status)"""
-        cursor.execute(sql, [RID, InvID, ManID, day, month, year, status])
+        sql = """insert into Restock values (:RID, :InvID, :ManID, CURRENT_DATE, :status)"""
+        cursor.execute(sql, [RID, InvID, ManID, status])
 
         # insert the products ordered into restock Prod 
         for i in range(items): 
