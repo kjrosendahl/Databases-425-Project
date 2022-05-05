@@ -1,5 +1,5 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
-import imp
+from types import CoroutineType
 from urllib.parse import parse_qs, urlparse
 import json
 import io
@@ -16,7 +16,6 @@ CONNECTION = cx_Oracle.connect(
 )
 
 def handlePOST(pathStr: str, params: dict, outStream: io.BufferedIOBase):
-    print("posting")
     match pathStr:
         case "/customer/createCustomer":
             print("Creating Customer")
@@ -83,6 +82,7 @@ def handlePOST(pathStr: str, params: dict, outStream: io.BufferedIOBase):
                     "CID": addr[1],
                     "message": addr
                 }
+                outStream.write(str.encode(json.dumps(ret)))
         
         case "/customer/addAddress":
             print("Adding Address")
@@ -93,10 +93,222 @@ def handlePOST(pathStr: str, params: dict, outStream: io.BufferedIOBase):
                 ret = {
                     "success": addr[0],
                     "CID": addr[1],
-                    "message": addr
+                    "message": addr[2]
                 }
+                outStream.write(str.encode(json.dumps(ret)))
+
+        case "/customer/orderOnlinePR":
+            print("Customer OrderOnline Page Request")
+            # First take care of invIds and Names
+            from ServerFilesCustomer.OnlineOrdering.InvIDStoreSearch import searchStoreInvID
+            inv = searchStoreInvID(CONNECTION)
+            invStuff = []
+            for i in inv:
+                invStuff.append(i[0:2])
+            from ServerFilesCustomer.OnlineOrdering.InvIDWarehouseSearch import searchWareInvID
+            inv = searchWareInvID(CONNECTION)
+            for i in inv:
+                invStuff.append([i[0], "Warehouse" + i[0]])
+
+            # Take care of brands
+            from ServerFilesCustomer.OnlineOrdering.BrandIDSearch import searchBrandID
+            brands = searchBrandID(CONNECTION)
+
+            # Take care of categories
+            from ServerFilesCustomer.OnlineOrdering.CatIDSearch import searchCatID
+            cats = searchCatID(CONNECTION)
+
+            ret = {
+                "success": True,
+                "inv": invStuff,
+                "brand": brands,
+                "cats": cats
+            }
+            outStream.write(str.encode(json.dumps(ret)))
+
+        case "/customer/orderOnlineInvSearch":
+            print("Searching through inventory")
+            if "invID" in params.keys():
+                catID = params["catID"] if ("catID" in params.keys()) else False
+                brandID = params["brandID"] if ("brandID" in params.keys()) else False
+                from ServerFilesCustomer.OnlineOrdering.InvRequest import InvRequest
+                search = InvRequest(CONNECTION, int(params["invID"]), brandID, catID)
+                ret = []
+                for i in search:
+                    t = {
+                        "PID": i[0],
+                        "name": i[1],
+                        "price": i[2],
+                        "quant": i[3],
+                        "brandName": i[4],
+                        "catName": i[5]
+                    }
+                    ret.append(t)
+                outStream.write(str.encode(json.dumps(ret)))
+            else:
+                print("Incorrect data")
+                outStream.write(str.encode(json.dumps({"success": False,"message": "Incorrect number of arguments"})))
+
+        case "/customer/customerPaymentPR":
+            print("Customer Payment Page Request")
+            if "CID" in params.keys():
+                from ServerFilesCustomer.PaymentPage.requestCredit import requestCredit
+                credit = requestCredit(CONNECTION, params["CID"])
+
+                from ServerFilesCustomer.PaymentPage.requestAddress import requestAddress
+                addr = requestAddress(CONNECTION, params["CID"])
+
+                if (not credit[0] or not addr[0]):
+                    outStream.write(str.encode(json.dumps({"success": False,"message": "Something went wrong"})))
+                    return
+
+                ret = {
+                    "success": True,
+                    "cardNumber": credit[1][1],
+                    "credit": credit[1][2],
+                    "street": addr[1][1],
+                    "city": addr[1][2],
+                    "state": addr[1][3],
+                    "zipcode": addr[1][4]
+                }
+                outStream.write(str.encode(json.dumps(ret)))
+            else:
+                print("Incorrect data")
+                outStream.write(str.encode(json.dumps({"success": False,"message": "Incorrect number of arguments"})))
+
+        case "/customer/payOrderNoAccount":
+            # (InvID, CID, Card Number, Street, City, State, Zipcode, PID[] quantity[])
+            if "invID" in params.keys() and "CID" in params.keys() and "cardNumber" in params.keys() and "PID" in params.keys() and "quantity" in params.keys():
+                from ServerFilesCustomer.PaymentPage.placeOrder import placeOrder
+                info = placeOrder(CONNECTION, int(params["CID"]), params['invID'], params["PID"], params["quantity"], cardNo=params["cardNumber"])
+                print(info)
+                ret = {
+                    "success": info[0],
+                    "trackingNumber": info[1],
+                    "shipComponay": info[2],
+                    "message": info[3]
+                }
+                outStream.write(str.encode(json.dumps(ret)))
+            else:
+                print("Incorrect data")
+                outStream.write(str.encode(json.dumps({"success": False,"message": "Incorrect number of arguments"})))
+
+        case "/customer/payOrderAccount":
+            # (InvID, CID, Card Number, Street, City, State, Zipcode, PID[] quantity[])
+            if "invID" in params.keys() and "CID" in params.keys() and "PID" in params.keys() and "quantity" in params.keys():
+                from ServerFilesCustomer.PaymentPage.placeOrder import placeOrder
+                info = placeOrder(CONNECTION, int(params["CID"]), params['invID'], params["PID"], params["quantity"])
+                print(info)
+                ret = {
+                    "success": info[0],
+                    "trackingNumber": info[1],
+                    "shipComponay": info[2],
+                    "message": info[3]
+                }
+                outStream.write(str.encode(json.dumps(ret)))
+            else:
+                print("Incorrect data")
+                outStream.write(str.encode(json.dumps({"success": False,"message": "Incorrect number of arguments"})))
+
+        case "/customer/accountModifyPR":
+            # Get Credit card info
+            # (Card Number, credit)
+            # Get the email
+            if "CID" in params.keys():
+                from ServerFilesCustomer.ViewModifyAcc.requestAccInfo import requestAccInfo
+                accInfo = requestAccInfo(CONNECTION, params["CID"]) # name, credit, address, orders, email
+
+                from ServerFilesCustomer.PaymentPage.requestCredit import requestCredit
+                credit = requestCredit(CONNECTION, params["CID"])
+
+                ret = {
+                    "success": True,
+                    "message": "Gathered all items",
+                    "cardNumber": credit[1][1],
+                    "credit": credit[1][2],
+                    "CID": params["CID"],
+                    "name": accInfo[0][1],
+                    "email": accInfo[4]
+                }
+                
+                from ServerFilesCustomer.ViewModifyAcc.requestOrders import requestOrders
+                orderHist = requestOrders(CONNECTION, accInfo[4]) # returned OrderID, Odate, total, status
+
+                # Need to return (PID, ProductName, Quantity, Price)[]
+                # (OrderID, day, month, year, total, tracking number, status)[]
+                from ServerFilesCustomer.ViewModifyAcc.requestOrderDetails import requestOrderDetails
+                hist = []
+                for i in orderHist:
+                    deets = requestOrderDetails(CONNECTION, accInfo[4], i[0]) # PID, ProductName, Quantity, price
+                    t = {
+                        "orderID": i[0],
+                        "total": i[2],
+                        "day": i[1].day,
+                        "month": i[1].month,
+                        "year": i[1].year,
+                        "status": i[3],
+                        "items": []
+                    }
+                    for j in deets:
+                        t["items"].append({
+                            "PID": j[0],
+                            "pName": j[1],
+                            "quantity": j[2],
+                            "price": j[3]
+                        })
+                    hist.append(t)
+                ret["orderHistory"] = hist
+                outStream.write(str.encode(json.dumps(ret)))
+            else:
+                print("Incorrect data")
+                outStream.write(str.encode(json.dumps({"success": False,"message": "Incorrect number of arguments"})))
+        
+        case "/customer/changeCredit":
+            if "CID" in params.keys() and "cardNumber" in params.keys():
+                from ServerFilesCustomer.ViewModifyAcc.changeCard import changeCard
+                res = changeCard(CONNECTION, params["CID"], params["cardNumber"])
+                if res[0]:
+                    outStream.write(str.encode(json.dumps({"success": True, "cardNumber": res[1]})))
+                else:
+                    outStream.write(str.encode(json.dumps({"success": False,"message": res[1]})))
+            else:
+                print("Incorrect data")
+                outStream.write(str.encode(json.dumps({"success": False,"message": "Incorrect number of arguments"})))
+
+        case "/customer/changeAddress":
+            if "CID" in params.keys() and "street" in params.keys() and "city" in params.keys() and "state" in params.keys() and "zipcode" in params.keys():
+                from ServerFilesCustomer.ViewModifyAcc.changeAddress import changeAddress
+                res = changeAddress(CONNECTION, params["CID"], params["street"], params["city"], params["state"], params["zipcode"])
+                if res[0]:
+                     outStream.write(str.encode(json.dumps({"success": True})))
+                else:
+                    outStream.write(str.encode(json.dumps({"success": False,"message": res[1]})))
+            else:
+                print("Incorrect data")
+                outStream.write(str.encode(json.dumps({"success": False,"message": "Incorrect number of arguments"})))
+
+        case "/customer/changePassword":
+            if "CID" in params.keys() and "newPassword" in params.keys() and "oldPassword" in params.keys():
+                from ServerFilesCustomer.ViewModifyAcc.changePassword import changePassword
+                res = changePassword(CONNECTION, params["CID"], params["oldPassword"], params["newPassword"])
+                outStream.write(str.encode(json.dumps({"success": res[0],"message": res[1]})))
+            else:
+                print("Incorrect data")
+                outStream.write(str.encode(json.dumps({"success": False,"message": "Incorrect number of arguments"})))
+
+        case "/customer/deleteAccount":
+            if "CID" in params.keys():
+                from ServerFilesCustomer.ViewModifyAcc.deleteAcc import deleteAcc
+                res = deleteAcc(CONNECTION, params["CID"])
+                outStream.write(str.encode(json.dumps({"success": res[0],"message": res[1]})))
+            else:
+                print("Incorrect data")
+                outStream.write(str.encode(json.dumps({"success": False,"message": "Incorrect number of arguments"})))
 
 
+# from ServerFilesCustomer.ViewModifyAcc.requestOrders import requestOrders
+# a = requestOrders(CONNECTION, "krosendahl@hawk.iit.edu")
+# print(a)
 
 class HANDLER(BaseHTTPRequestHandler):
 
