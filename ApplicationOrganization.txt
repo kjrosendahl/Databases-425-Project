@@ -69,15 +69,13 @@ Ordering Online Page (Folder: OnlineOrdering)
         Cart info will not be sent to the server, it will be kept on device
     ------
     Stuff that will be sent to the server
-        Page request
+DONE    Page request
             -> A page to display stuff
             -> A list of store inventory ids (InvID, Names)[] *FINISHED (InvIDStoreSearch.py, InvIDWarehouseSearch.py)* 
             -> A list of brands and their brand ids (BrandID, BrandName)[] *FINISHED (BrandIDSearch.py)*
             -> A list of categories and the ids (CategoryID, CategoryName)[] *FINISHED (CatIDSearch.py)*
-        Request for store/warehouse inventory (InvID)
-            -> The respective inventory (PID, ProductName, price, quantity, BrandName, CateogryName)[] *FINISHED (InvRequest.py)*
-        Search by brand and/or category (InvID, BrandID, CategoryID)
-            -> Search results (PID, ProductName, price, quantity, BrandName, CategoryName)[]
+DONE    Search by brand and/or category (InvID, BrandID, CategoryID)
+            -> Search results (PID, ProductName, price, quantity, BrandName, CategoryName)[] *FINISHED (InvRequest.py)*
 
 Customer Payment Page (Folder: PaymentPage)
     This is the page where they will actually pay for stuff
@@ -85,16 +83,15 @@ Customer Payment Page (Folder: PaymentPage)
     If have an account, it will automatically send to the address they have on file, and the credit card
     If they don't have an account, input an address and a credit card
     When they hit the pay button, it will actually send the order to the server along with their credit card info
-    They will have to enter the CVV for the card no matter what
     ------
     Stuff that will be sent to the server
-        Page request
+DONE    Page request
             -> A page to display stuff
-            -> Existing credit cards (Card Number, CVV) *FINISHED (requestCredit.py)*
+            -> Existing credit cards (Card Number) *FINISHED (requestCredit.py)*
             -> Existing addresses (Street, City, State, Zipcode) *FINISHED (requestAddress.py)*
-        Pay for order NO account (InvID, CID, Card Number, CVV, Street, City, State, Zipcode, (PID, quantity)[])
+DONE    Pay for order NO account (InvID, CID, Card Number, PID[], quantity[])
             -> A confirmation as to whether their payment went through and a message explaining failure (boolean, tracking info, shipping name, message) *FINISHED (
-        Pay for order account (InvID, CID, (PID, quantity)[])
+DONE    Pay for order account (InvID, CID, PID[], quantity[])
             -> A confirmation as to whether their payment went through and a message explaining failure (boolean, tracking info, shipping name, message) *FINISHED*
             *(both in placeOrder.py)*
             
@@ -108,36 +105,26 @@ Customer Payment Page (Folder: PaymentPage)
         3) the database crapped out on me again
  -- regardless if they have an account or not, should return the tracking info and shipping company name, if successfully placed 
 
-View Acccount history
-    View your account history
-    This means all past purchases
-    Customers can also view the credit that they currently
-    ------
-    Stuff that will be sent to the server
-        Page request
-            -> A page to display stuff
-            -> Existing credit and credit available (Card Number, credit) *FIINISHED (see above): requestCredit.py*
-            -> Order history (OrderID, day, month, year, total, tracking number, status)[] *FINISHED (requestOrders.py)*
-            -> Order details (PID, ProductName, Quantity, Price) *FINISHED (requestOrderDetails.py)*
-
 Modify Acccount
+    View your account history
     Change credit card
     Change address
     Delete Account
     ------
     Stuff that will be sent to the server
-        Page request
+DONE    Page request
             -> A page to display stuff
             -> Their information (CID, Name, email) *FINISHED (requestAccInfo.py)*
-            -> Existing credit and credit available (Card Number, CVV, credit) *FINISHED (see above): requestCredit.py*
-            -> Order history (OrderID, day, month, year, total, tracking number, status)[] *FINISHED (see above): requestOrders.py)*
-        Credit Card Change (CID, Card Number, CVV)
+            -> Existing credit and credit available (Card Number, credit) *FINISHED (see above): requestCredit.py*
+            -> Order history (OrderID, day, month, year, total, tracking number, status)[] *FINISHED (requestOrders.py)*
+            -> Order details (PID, ProductName, Quantity, Price) *FINISHED (requestOrderDetails.py)*
+DONE    Credit Card Change (CID, Card Number)
             -> Confirmation (boolean, card number) *FINISHED (changeCredit.py)*
-        Address change (CID, Street, City, State, Zipcode)
+DONE    Address change (CID, Street, City, State, Zipcode)
             -> Confirmation (boolean, Street, City, State, Zipcode) *FINISHED (changeAddress.py)*
-        Password Change (CID, oldPassword, newPassword) *FINISHED (changePassword.py)*
+DONE    Password Change (CID, oldPassword, newPassword) *FINISHED (changePassword.py)*
             -> Confirmation (boolean)
-        Delete Account (CID) *FINISHED (deleteAcc.py)*
+DONE    Delete Account (CID) *FINISHED (deleteAcc.py)*
             -> Confirmation (boolean)
             
  ^^^^^^^^^^
@@ -156,7 +143,7 @@ Employee Login
     Stuff that will be sent to the server
         Page request
             -> A page to display stuff
-        Login verfication (emp_id, password)
+DONE    Login verfication (emp_id, password)
             -> A confirmation of whether the id/pwd is incorrect and a EID if it is (boolean, EID) *FINISHED (loginEmployee.py)*
 
 Store stock page
@@ -166,23 +153,23 @@ Store stock page
     They can submit manual restock requests
     ------
     Stuff that will be sent to the server
-        Page request
+DONE    Page request
             -> A page to display stuff
             -> List of available inventories (InvID)[] *FINISHED (availableInv.py)*
             -> List of all the products (PID, ProductName, BrandID, CategoryID)[] *FINISHED (availableProd.py)*
             -> List of all the manufactureres (ManID, Name, PID, Capacity)[] *FINISHED (manuInfo.py)*
-        View inventory (EmpId, InvID) *FINISHED, see above for the customer view inventory)*
-            -> The inventory of a specific warehouse or store they request (PID, ProductName, price, quantity, brandID, CategoryID)[]
             -> A list of brands and their brand ids (BrandID, BrandName)[]
             -> A list of categories and the ids (CategoryID, CategoryName)[]
-        Manual restock (InvID, PIDs, quantities, ManID, passkey)[]
+DONE    View inventory (InvID) *FINISHED, see above for the customer view inventory)*
+            -> The inventory of a specific warehouse or store they request (PID, ProductName, price, quantity, brandID, CategoryID)[]
+DONE    Manual restock (InvID, PIDs, quantities, ManID, passkey)[]
             -> Confirmation and updated inventory (Boolean, RestockID, InvID, message)[] *FINISHED (placeRestock.py)*
 
 In store Payment
     Products they buy and if they have an account
     ------
     Stuff that will be sent to the server
-        Pay for order NO Acccount (InvID, PIDs, quantities)[] *FINISHED (inStoreOrderNoAcc.py)*
+DONE    Pay for order NO Acccount (InvID, PIDs, quantities)[] *FINISHED (inStoreOrderNoAcc.py)*
             -> A confirmation (boolean, OrderID, message)
-        Pay for order Account (email, InvID, PIDs, quantities)[]) *FINISHED (inStoreOrderAcc.py)*
+DONE    Pay for order Account (email, InvID, PIDs, quantities)[]) *FINISHED (inStoreOrderAcc.py)*
             -> A confirmation (boolean, OrderID, message)

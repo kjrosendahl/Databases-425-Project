@@ -305,10 +305,132 @@ def handlePOST(pathStr: str, params: dict, outStream: io.BufferedIOBase):
                 print("Incorrect data")
                 outStream.write(str.encode(json.dumps({"success": False,"message": "Incorrect number of arguments"})))
 
+        # Employees
+        case "/employee/verifyLogin":
+            if "EID" in params.keys() and "password" in params.keys():
+                from ServerFilesEmployee.loginEmployee import loginVerificationEmployee
+                res = loginVerificationEmployee(CONNECTION, params["EID"], params["password"])
+                if res[0]:
+                    outStream.write(str.encode(json.dumps({"success": True, "EID": res[1]})))
+                else:
+                    outStream.write(str.encode(json.dumps({"success": False, "message": res[1]})))
+            else:
+                print("Incorrect data")
+                outStream.write(str.encode(json.dumps({"success": False,"message": "Incorrect number of arguments"})))
+            
+        case "/employee/storeStockPR":
+            # Get inventories
+            from ServerFilesEmployee.availableInv import availableInv
+            invs = availableInv(CONNECTION)
 
-# from ServerFilesCustomer.ViewModifyAcc.requestOrders import requestOrders
-# a = requestOrders(CONNECTION, "krosendahl@hawk.iit.edu")
-# print(a)
+            # Get product deets
+            from ServerFilesEmployee.availableProd import availableProd
+            prods = availableProd(CONNECTION)
+            pro = []
+            for i in prods:
+                j = {
+                    "PID": i[0],
+                    "brandID": i[1],
+                    "catID": i[2],
+                    "name": i[3]
+                }
+                pro.append(j)
+
+            # Get manufacturers
+            from ServerFilesEmployee.manuInfo import manInfo
+            mans = manInfo(CONNECTION)
+            man = {}
+            for i in mans:
+                if i[0] in man.keys():
+                    man[i[0]]["PID"].append(i[1])
+                else:
+                    man[i[0]] = { "manID": i[0], "PID": [i[1]], "capacity": i[3], "name": i[2] }
+
+
+            # Take care of brands
+            from ServerFilesCustomer.OnlineOrdering.BrandIDSearch import searchBrandID
+            brands = searchBrandID(CONNECTION)
+
+            # Take care of categories
+            from ServerFilesCustomer.OnlineOrdering.CatIDSearch import searchCatID
+            cats = searchCatID(CONNECTION)
+
+            ret = {
+                "success": True,
+                "inv": invs,
+                "products": pro,
+                "mans": man,
+                "brands": brands,
+                "cats": cats
+            }
+            outStream.write(str.encode(json.dumps(ret)))
+
+        case "/employee/viewInventory":
+            if "invID" in params.keys():
+                catID = params["catID"] if ("catID" in params.keys()) else False
+                brandID = params["brandID"] if ("brandID" in params.keys()) else False
+                from ServerFilesCustomer.OnlineOrdering.InvRequest import InvRequest
+                search = InvRequest(CONNECTION, int(params["invID"]), brandID, catID)
+                ret = []
+                for i in search:
+                    t = {
+                        "PID": i[0],
+                        "name": i[1],
+                        "price": i[2],
+                        "quant": i[3],
+                        "brandName": i[4],
+                        "catName": i[5]
+                    }
+                    ret.append(t)
+                outStream.write(str.encode(json.dumps(ret)))
+            else:
+                print("Incorrect data")
+                outStream.write(str.encode(json.dumps({"success": False,"message": "Incorrect number of arguments"})))
+        
+        case "/employee/manualRestock":
+            if "invID" in params.keys() and "PID" in params.keys() and "quantity" in params.keys() and "manID" in params.keys() and "passkey" in params.keys():
+                from ServerFilesEmployee.placeRestock import placeRestock
+                res = placeRestock(CONNECTION, params["invID"], params["PID"], params["quantity"], params["manID"], params["passkey"]) # (True, RID, InvID, 'Restock Order placed.')
+                ret = {
+                    "success": res[0],
+                    "restockID": res[1],
+                    "invID": res[2],
+                    "message": res[3]
+                }
+                outStream.write(str.encode(json.dumps(ret)))
+            else:
+                print("Incorrect data")
+                outStream.write(str.encode(json.dumps({"success": False,"message": "Incorrect number of arguments"})))
+
+        case "employee/inStoreOrderNoAccount":
+            if "invID" in params.keys() and "PID" in params.keys() and "quantity" in params.keys():
+                from ServerFilesEmployee.inStoreOrderNoAcc import inStoreOrderNoAcc
+                res = inStoreOrderNoAcc(CONNECTION, params["invID"], params["PID"], params["quantity"])
+                ret = {
+                    "success": res[0],
+                    "orderID": res[1],
+                    "message": res[2]
+                }
+                outStream.write(str.encode(json.dumps(ret)))
+            else:
+                print("Incorrect data")
+                outStream.write(str.encode(json.dumps({"success": False,"message": "Incorrect number of arguments"})))
+
+        case "employee/inStoreOrderAccount":
+            if "invID" in params.keys() and  "PID" in params.keys() and  "quantity" in params.keys() and  "email" in params.keys():
+                from ServerFilesEmployee.inStoreOrderAcc import inStoreOrderAcc
+                res = inStoreOrderAcc(CONNECTION, params["email"], params["invID"], params["PID"], params["quantity"])
+                ret = {
+                    "success": res[0],
+                    "orderID": res[1],
+                    "message": res[2]
+                }
+                outStream.write(str.encode(json.dumps(ret)))
+            else:
+                print("Incorrect data")
+                outStream.write(str.encode(json.dumps({"success": False,"message": "Incorrect number of arguments"})))
+
+
 
 class HANDLER(BaseHTTPRequestHandler):
 
