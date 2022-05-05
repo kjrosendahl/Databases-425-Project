@@ -14,19 +14,19 @@ def requestAccInfo(connection, CID: int):
         info = "Account not found."
     else:
         info = x[0]
-    y = requestCredit(CID)
+    y = requestCredit(connection, CID)
     if not y[0]:
         credit = "Card not found."
     else: 
         credit = y[1][1:]
-    z = requestAddress(CID)
+    z = requestAddress(connection, CID)
     if not z[0]: 
         address = "Address not found."
     else: 
         address = z[1][1:]
-    a = requestOrders(info[2])
+    a = requestOrders(connection, info[2])
     if not a: 
         orders = "Orders not found."
     else:
         orders = a
-    return[info, credit, address, orders, x[2]]
+    return (info, credit, address, orders, x[0][2])
