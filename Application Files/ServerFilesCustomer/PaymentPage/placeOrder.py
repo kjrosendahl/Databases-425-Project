@@ -40,6 +40,7 @@ def placeOrder(connection, CID: int, InvID: int, PIDs: list[int], Quantities: li
     if not cardNo:
         sql = """select credit from Credit where CID = :CID"""
         x = (cursor.execute(sql, [CID])).fetchall()[0][0]
+        print(x)
         if x < total: 
             return(False, 'null', 'null', "Order failed. You do not have enough credit.")
         else: 
@@ -48,11 +49,12 @@ def placeOrder(connection, CID: int, InvID: int, PIDs: list[int], Quantities: li
     else:
         sql = """select credit from Credit where CardNo = :cardNo"""
         x = (cursor.execute(sql, [cardNo])).fetchall()[0][0]
+        print(x)
         if x < total: 
             return(False, 'null', 'null', "Order failed. You do not have enough credit.")
         else: 
-            sql = """update Credit set credit = credit - :total where CID = :CID"""
-            x = (cursor.execute(sql, [total, CID]))
+            sql = """update Credit set credit = credit - :total where CardNo = :cardNo"""
+            x = (cursor.execute(sql, [total, cardNo]))
             
     # create new order record 
     try: 
@@ -83,6 +85,7 @@ def placeOrder(connection, CID: int, InvID: int, PIDs: list[int], Quantities: li
     if x[0][0] is None: 
         trackNo = 1
     else: 
+        print(x, x[0], x[0][0])
         trackNo = int(x[0][0]) + 1
         
     # randomly choose shipping company
