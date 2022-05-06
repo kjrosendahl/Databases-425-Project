@@ -1,16 +1,15 @@
 # Databases-425-Project
-Electronic Vendor Database, where the last piece of my sanity went
+Electronic Vendor Database
 
-Due May 5th, 2022
+Due May 5th
 
-Requirements/Deliverables: 
+Organization:
 
-1. ER Diagram Sketch (update before turning in!! consult finalized sql scripts) 
-2. SQL Scripts
-3. Application (server, gui) 
-4. Report 
+1. We have all of our source code and SQL scripts in the Folder Application Files. The folders within this, ServerFilesCustomer and ServerFilesEmployee, hold the python files that hold the SQL functions used to query and update the database. The rest holdes the UI files. 
+2. ER digram is included
+3. Application Organization is included. This is our plan and implemented details. 
+4. WorkingScript is the SQL script that holds the relation tables and other information. 
+5. Instructions details how to use the UI so that it runs. 
 
-To Do: 
-- collab on application
-- Turn into a user application 
-- wait and see if our other group member fell off the face of the earth, or if he'll eventually turn up
+Thanks, 
+Kaylee and Noah
