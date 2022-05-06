@@ -426,8 +426,6 @@ insert into Credit values (1, '1234567800000000', 1000);
 insert into Shipping values ('12345', 'UPS'); 
 insert into Shipping values ('67890', 'FedEx'); 
 
-insert into OrderShip values (1, '12345', 'null'); 
-
 
 /* example query: find the address of any stores that hold Legend of Zelda BOTW */ 
 select street, city, state 

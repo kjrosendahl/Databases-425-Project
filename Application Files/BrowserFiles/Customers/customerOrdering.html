@@ -136,7 +136,7 @@
 
                 if (currentInv != invID) {
                     currentInv = invID;
-                    cart = {};
+                    cart = {inv: invID};
                     drawCart();
                 }
 
@@ -196,7 +196,7 @@
         // Set up the add to cart button
         document.getElementById("updateCart").addEventListener('click', () => {
             document.getElementById("modifyError").style.display = 'none'
-            v = document.getElementById("quantity").value;
+            v = parseInt(document.getElementById("quantity").value);
             if (v > curr.quant || v < 0) {
                 document.getElementById("modifyError").style.display = 'block';
                 return
@@ -223,7 +223,7 @@
             total = 0;
 
             for (let i in cart) {
-                if (cart[i].quantity == 0) {
+                if (cart[i].quantity == 0 || i == "inv") {
                     break;
                 }
                 let a = table.insertRow();

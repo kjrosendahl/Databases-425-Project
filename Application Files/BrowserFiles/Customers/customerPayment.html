@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Creation</title>
+
+    <script src="../univs/axios.min.js"></script>
+
+    <link rel="stylesheet" href="universalStyles.css">
+    <style>
+        #content {
+            display: flex;
+            justify-content: space-around;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <img src="../logo.png">
+        <div id="sessionOptions">Log Out</div>
+    </div>
+    <span id="error"></span>
+    <div id="content">
+        <div id="cartcollumn">
+            <h2>Your Cart</h2>
+            <h3>Total: <span id="cartTotal"></span></h3>
+            <table id="cart">
+                <tr>
+                    <th>Item</th>
+                    <th>Amount</th>
+                    <th>Price</th>
+                </tr>
+            </table>
+        </div>
+        <div style="display: none;" id="haveount">
+            <h2>We have all of your information on file. You are ready to pay</h2>
+            <input type="button" value="Purchase items" id="purchaseButtonYes">
+
+        </div>
+        <div style="display: none;" id="noAccount">
+            <h2>There is no account on record for you</h2>
+            So we will need you card number: 
+            <input type="text" maxlength="16" id="cardNumber">
+            <input type="button" value="Purchase items" id="purchaseButtonNo"><br />
+        </div>
+        <div style="display: none" id="deets">
+            <h2>Order placed successfully</h2>
+            <p>Tracking Number: <span id="trackNumber"></span></p>
+            <p>Shipping Company: <span id="shipCompany"></span></p>
+        </div>
+
+    </div>
+    <script>
+        // Get the CID
+        var CID = localStorage.getItem("customerCID")
+        if (CID == null) {
+            name = prompt('What name would you like to be known as', 'John');
+            if (name == null) {
+                alert("Something went wrong contacting the server");
+            } else {
+                axios.post('/customer/createCustomer', {
+                    "name": name
+                }).then( response => {
+                    if (response.data.success == true) {
+                        CID = response.data.CID;
+                        localStorage.setItem("customerCID", CID);
+                    } else {
+                        alert("Something went wrong contacting the server");
+                    }
+                }).catch( error => {
+                    alert("Something went wrong contacting the server");
+                });
+            }
+        }
+
+        // Get the info from the server
+        axios.post('/customer/customerPaymentPR', {
+            CID: CID
+        }).then(function (response) {
+            console.log(response)
+            if (response.data.success) {
+                document.getElementById("haveAccount").style.display = 'block';
+            } else {
+                document.getElementById("noAccount").style.display = 'block';
+            }
+        }).catch(function (error) {
+            console.log(error);
+        });
+
+
+        cart = JSON.parse(localStorage.getItem("cart"));
+        drawCart();
+
+        function drawCart() {
+            table = document.getElementById("cart");
+
+            total = 0;
+
+            for (let i in cart) {
+                if (cart[i].quantity == 0 || i == "inv") {
+                    break;
+                }
+                let a = table.insertRow();
+                    a.dataset.rowInfo = i;
+                (a.insertCell()).innerHTML = cart[i].name;
+                (a.insertCell()).innerHTML = cart[i].quantity;
+                (a.insertCell()).innerHTML = cart[i].price;
+                total += cart[i].quantity * cart[i].price;
+            }
+            document.getElementById("cartTotal").innerHTML = "$" + total.toFixed(2)
+        }
+
+        // Buttons, how we love buttons
+        document.getElementById("purchaseButtonNo").addEventListener('click', () => {
+            document.getElementById("error").innerHTML = "";
+            let card = document.getElementById("cardNumber").value;
+            if (card.length != 16) {
+                document.getElementById("error").innerHTML = "Card must be 16 digits";
+                return
+            }
+
+            // Put together the data
+            pids = [];
+            quants = [];
+            for (let i in cart) {
+                if (cart[i].quantity == 0 || i == "inv") {
+                    break;
+                }
+                pids.push(i)
+                quants.push(cart[i].quantity)
+            }
+
+            axios.post('/customer/payOrderNoAccount', {
+                CID: CID,
+                cardNumber: card,
+                invID: cart.inv,
+                PID: pids,
+                quantity: quants
+            }).then(function (response) {
+                console.log(response)
+                if (!response.data.success) {
+                    document.getElementById("error").innerHTML = response.data.message;
+                } else {
+                    document.getElementById("deets").style.display = 'block';
+                    document.getElementById("trackNumber").innerHTML = response.data.trackingNumber;
+                    document.getElementById("shipCompany").innerHTML = response.data.shipCompany;
+                }
+            }).catch(function (error) {
+                console.log(error);
+            });
+        });
+
+        document.getElementById("purchaseButtonYes").addEventListener('click', () => {
+            document.getElementById("error").innerHTML = "";
+
+            // Put together the data
+            pids = [];
+            quants = [];
+            for (let i in cart) {
+                if (i == "inv" || cart[i].quantity == 0) {
+                    break;
+                }
+                pids.push(i)
+                quants.push(cart[i].quantity)
+            }
+
+            axios.post('/customer/payOrderAccount', {
+                CID: CID,
+                invID: cart.inv,
+                PID: pids,
+                quantity: quants
+            }).then(function (response) {
+                console.log(response)
+                if (!response.data.success) {
+                    document.getElementById("error").innerHTML = response.data.message;
+                } else {
+                    document.getElementById("deets").style.display = 'block';
+                    document.getElementById("trackNumber").innerHTML = response.data.trackingNumber;
+                    document.getElementById("shipCompany").innerHTML = response.data.shipCompany;
+                }
+            }).catch(function (error) {
+                console.log(error);
+            });
+        })
+    </script>
+</body>
+</html>

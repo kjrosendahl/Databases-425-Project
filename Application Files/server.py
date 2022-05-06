@@ -175,7 +175,7 @@ def handlePOST(pathStr: str, params: dict, outStream: io.BufferedIOBase):
                 addr = requestAddress(CONNECTION, params["CID"])
 
                 if (not credit[0] or not addr[0]):
-                    outStream.write(str.encode(json.dumps({"success": False,"message": "Something went wrong"})))
+                    outStream.write(str.encode(json.dumps({"success": False, "message": "No credit card and address is on file for you"})))
                     return
 
                 ret = {
@@ -201,7 +201,7 @@ def handlePOST(pathStr: str, params: dict, outStream: io.BufferedIOBase):
                 ret = {
                     "success": info[0],
                     "trackingNumber": info[1],
-                    "shipComponay": info[2],
+                    "shipCompany": info[2],
                     "message": info[3]
                 }
                 outStream.write(str.encode(json.dumps(ret)))
@@ -218,7 +218,7 @@ def handlePOST(pathStr: str, params: dict, outStream: io.BufferedIOBase):
                 ret = {
                     "success": info[0],
                     "trackingNumber": info[1],
-                    "shipComponay": info[2],
+                    "shipCompany": info[2],
                     "message": info[3]
                 }
                 outStream.write(str.encode(json.dumps(ret)))
