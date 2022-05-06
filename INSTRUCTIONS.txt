@@ -1,0 +1,29 @@
+To run this you need Oracle and to run all of the commands in the WorkingScript.sql
+
+There is only one python library to install which is "cx_Oracle"
+
+The file that is the server is  at "Application Files\server.py"
+Make sure you are in the directory when you run it
+
+List of links once it is running
+
+Store Stock Page
+http://localhost:9999/Employees/storeStockPage.html
+
+Employee Login Page
+http://localhost:9999/Employees/employeeLogin.html
+
+Customer Account Modification Page
+http://localhost:9999/Customers/customerModify.html
+
+Customer Order Builder Page
+http://localhost:9999/Customers/customerOrdering.html
+
+Customer Order Payment Page
+http://localhost:9999/Customers/customerPayment.html
+
+Customer Login Page
+http://localhost:9999/Customers/customerLogin.html
+
+Customer Account Creation Page
+http://localhost:9999/Customers/customerAccountCreation.html

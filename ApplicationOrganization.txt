@@ -25,6 +25,9 @@ What we need to discuss
 Notes
     Customers can take from stores and warehouses
 
+Implementation Notes
+    All the functions are implemented
+    Not all of the application pages are done
 
 List of site pages
 
