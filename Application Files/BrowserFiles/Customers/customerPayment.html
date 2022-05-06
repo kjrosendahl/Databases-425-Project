@@ -19,7 +19,7 @@
 <body>
     <div id="header">
         <img src="../logo.png">
-        <div id="sessionOptions">Log Out</div>
+        <div id="sessionOptions"><a href="/Customers/customerLogin.html">Log In</a></div>
     </div>
     <span id="error"></span>
     <div id="content">
@@ -34,7 +34,7 @@
                 </tr>
             </table>
         </div>
-        <div style="display: none;" id="haveount">
+        <div style="display: none;" id="haveAccount">
             <h2>We have all of your information on file. You are ready to pay</h2>
             <input type="button" value="Purchase items" id="purchaseButtonYes">
 
@@ -76,7 +76,7 @@
         }
 
         // Get the info from the server
-        axios.post('accountModifyPR', {
+        axios.post('/customer/customerPaymentPR', {
             CID: CID
         }).then(function (response) {
             console.log(response)

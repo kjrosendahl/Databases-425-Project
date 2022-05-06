@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Stock Page</title>
+
+    <script src="../univs/axios.min.js"></script>
+
+    <link rel="stylesheet" href="../Customers/universalStyles.css">
+    <style>
+        #content {
+            display: flex;
+            justify-content: space-around;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <img src="../logo.png">
+        <div id="sessionOptions"><a href="/Employees/employeeLogin.html">Log In</a></div>
+    </div>
+    <div id="content">
+        <div>
+            <h2>View the inventory</h2>
+            <h3>Select an inventory</h3>
+            <select id="invs"></select>
+            <input id="searchButton" type="button" value="Go"> 
+            <h3>Inventory Items</h3>
+            <table id="inventory">
+                <tr>
+                    <th>PID</th>
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Brand</th>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <h2>View all Products</h2>
+            <table id="product">
+                <tr>
+                    <th>PID</th>
+                    <th>Name</th>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <h2>View Manufacturers</h2>
+            <h3>Select a Manufacturer</h3>
+            <select id="manSelect"></select>
+            <input id="manGo" type="button" value="Go"><br>
+            Capacity: <span id="capcity"></span><br>
+            ManID: <span id="manID"></span><br>
+            Name: <span id="manName"></span>
+            <table id="manProducts">
+                <tr>
+                    <th>PID</th>
+                </tr>
+            </table>
+        </div>
+        <!-- <div>
+            <h2>Manually Restock</h2>
+            InventoryID: <input type="text" id="resInvID"><br>
+            ManufacturerID: <input type="text" id="resManID"><br>
+            PassKey: <input type="text" id="resPassKey"><br>
+            PID: <input type="text" id="resPID"> Quantity: <input type="number" id="resQuantity"><input type="button" value="Add" id="resAddItem">
+            <table id="resOrder">
+                <tr>
+                    <th>PID</th>
+                    <th>Quantity</th>
+                </tr>
+            </table>
+            <input type="button" value="Place Order" id="resPlaceOrder"><br>
+            <span id="error"></span>
+        </div> -->
+    </div>
+
+
+    <script>
+        document.getElementById("manGo").addEventListener('click', () => {
+            // Get what it's pointing to
+            let searchFor = document.getElementById('manSelect').value;
+            let info = manufacturerInfo[searchFor];
+            document.getElementById("capcity").innerHTML = info.capacity;
+            document.getElementById("manID").innerHTML = info.manID;
+            document.getElementById("manName").innerHTML = info.name;
+
+            let table = document.getElementById('manProducts');
+            for (let i = 0; i < info.PID.length; i++) {
+                a = table.insertRow();
+                (a.insertCell()).innerHTML = info.PID[i];
+            }
+        })
+
+        document.getElementById("searchButton").addEventListener('click', () => {
+            // Get the value of the search inventory
+            let searchFor = document.getElementById("invs").value;
+            
+            axios.post('/employee/viewInventory', {"invID": searchFor}).then( response => {
+                console.log(response)
+                // Add inventories
+                let table = document.getElementById("inventory");
+                while (table.rows.length > 1) {
+                    table.deleteRow(1);
+                }
+                var a
+                for (let i = 0; i < response.data.length; i++) {
+                    a = table.insertRow();
+                    (a.insertCell()).innerHTML = response.data[i].PID;
+                    (a.insertCell()).innerHTML = response.data[i].name;
+                    (a.insertCell()).innerHTML = response.data[i].quant;
+                    (a.insertCell()).innerHTML = response.data[i].price;
+                    (a.insertCell()).innerHTML = response.data[i].brandName;
+                }
+            }).catch( error => {
+                console.error(error)
+            });
+        })
+        
+        var manufacturerInfo;
+
+        axios.post('/employee/storeStockPR', {}).then( response => {
+            console.log(response)
+            // Add inventories
+            let invList = document.getElementById("invs");
+            for (let i = 0; i < response.data.inv.length; i++) {
+                let opt = document.createElement("option");
+                    opt.value = response.data.inv[i];
+                    opt.innerHTML = response.data.inv[i];
+                invList.add(opt)
+            }
+
+            manufacturerInfo = response.data.mans;
+
+            // Add all products
+            let prodTable = document.getElementById("product");
+            var a;
+            for (let i = 0; i < response.data.products.length; i++) {
+                a = prodTable.insertRow();
+                (a.insertCell()).innerHTML = response.data.products[i].PID;
+                (a.insertCell()).innerHTML = response.data.products[i].name;
+            }
+
+            // Add manufacturers
+            let manList = document.getElementById("manSelect");
+            for (let i in response.data.mans) {
+                let opt = document.createElement("option");
+                    opt.value = response.data.mans[i].manID;
+                    opt.innerHTML = response.data.mans[i].name;
+                manList.add(opt)
+            }
+
+
+        }).catch( error => {
+            console.error(error)
+        });
+
+    </script>
+</body>
+</html>

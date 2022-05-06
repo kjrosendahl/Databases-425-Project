@@ -4,37 +4,53 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Login</title>
+    <title>Employee Login</title>
 
+    <script src="../univs/axios.min.js"></script>
+
+    <link rel="stylesheet" href="../Customers/universalStyles.css">
     <style>
         #content {
             display: flex;
-            justify-content: center;
-            padding-top: 100px;
+            justify-content: space-around;
         }
     </style>
 </head>
 <body>
+    <div id="header">
+        <img src="../logo.png">
+        <div id="sessionOptions">Log Out</div>
+    </div>
     <div id="content">
         <div id="login">
             <p>Employee ID</p>
-            <input type="email" id="empID">
+            <input type="text" id="empID">
             <p>Password</p>
             <input type="password" id="userPassword"><br>
-            <input type="button" id="submit" value="Log In">
+            <input type="button" id="submit" value="Log In"><br>
+            <span id="error"></span>
         </div>
     </div>
     <script>
         document.getElementById("submit").addEventListener('click', () => {
             let id = document.getElementById("empID").value;
             let pwd = document.getElementById("userPassword").value;
-            sendToServer(id,pwd);
+            axios.post('/employee/verifyLogin', {
+                "EID": id,
+                "password": pwd
+            }).then( response => {
+                console.log(response)
+                if (response.data.success == true) {
+                    EID = response.data.EID;
+                    localStorage.setItem("EID", EID);
+                    window.location.href = window.location.origin + "/Employees/storeStockPage.html";
+                } else {
+                    document.getElementById("error").innerHTML = response.data.message;
+                }
+            }).catch( error => {
+                alert("Something went wrong contacting the server");
+            });
         });
-        function sendToServer(id, pwd) {
-            // Send it to server
-            // If good, redirect
-            // If bad, tell them no
-        }
     </script>
 </body>
 </html>
